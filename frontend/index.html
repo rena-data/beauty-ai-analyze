@@ -186,7 +186,14 @@
             <!-- Download Report -->
             <div class="center-action" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
                 <button id="download-report-btn" class="btn-primary" style="width:auto;">전체 리포트 다운로드 (이미지)</button>
-                <button id="share-btn" class="btn-secondary" style="display:none;">결과 공유 링크 복사</button>
+                <div id="share-wrap" style="display:none;position:relative;">
+                    <button id="share-btn" class="btn-secondary">공유하기</button>
+                    <div id="share-dropdown" class="share-dropdown hidden">
+                        <button class="share-item" data-type="x">X (트위터)</button>
+                        <button class="share-item" data-type="facebook">Facebook</button>
+                        <button class="share-item" data-type="copy">URL 복사</button>
+                    </div>
+                </div>
                 <button id="reset-btn" class="btn-secondary">다른 사진으로 다시 분석하기</button>
             </div>
         </section>

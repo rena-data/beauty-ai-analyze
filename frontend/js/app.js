@@ -25,7 +25,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (analyzeBtn) analyzeBtn.addEventListener("click", runAnalysis);
     if (resetBtn) resetBtn.addEventListener("click", resetAll);
     if (dlBtn) dlBtn.addEventListener("click", downloadReport);
-    if (shareBtn) shareBtn.addEventListener("click", copyShareUrl);
+    if (shareBtn) shareBtn.addEventListener("click", toggleShareDropdown);
+    document.addEventListener("click", (e) => {
+        const dd = $("#share-dropdown");
+        const wrap = $("#share-wrap");
+        if (dd && wrap && !wrap.contains(e.target)) dd.classList.add("hidden");
+    });
+    document.querySelectorAll(".share-item").forEach(btn => {
+        btn.addEventListener("click", () => handleShare(btn.dataset.type));
+    });
 
     // 공유 URL로 접속한 경우 결과 로드
     checkSharedUrl();
@@ -189,17 +197,39 @@ function getShareUrl() {
     return `${location.origin}?share=${analysisResult.share_id}`;
 }
 
-// ─── Share URL Copy ───
-function copyShareUrl() {
+// ─── Share ───
+function toggleShareDropdown() {
+    const dd = $("#share-dropdown");
+    if (dd) dd.classList.toggle("hidden");
+}
+
+function handleShare(type) {
     const url = getShareUrl();
     if (!url) { alert("공유 링크를 생성할 수 없습니다."); return; }
-    navigator.clipboard.writeText(url).then(() => {
-        const btn = $("#share-btn");
-        btn.textContent = "링크 복사됨!";
-        setTimeout(() => { btn.textContent = "결과 공유 링크 복사"; }, 2000);
-    }).catch(() => {
-        prompt("아래 링크를 복사하세요:", url);
-    });
+
+    const r = analysisResult;
+    const s = SM[r.season_type] || SM.spring_warm;
+    const title = `나의 퍼스널컬러는 ${s.emoji} ${r.season_detail || s.ko}!`;
+    const text = `${title} AI 퍼스널컬러 무료 진단 받아보세요!`;
+
+    switch (type) {
+        case "x":
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
+            break;
+        case "facebook":
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`, "_blank");
+            break;
+        case "copy":
+            navigator.clipboard.writeText(url).then(() => {
+                alert("링크가 복사되었습니다!");
+            }).catch(() => {
+                prompt("아래 링크를 복사하세요:", url);
+            });
+            break;
+    }
+
+    $("#share-dropdown").classList.add("hidden");
+    gEvent("share", { type, season_type: r.season_type });
 }
 
 // ─── Shared URL Load ───
@@ -412,8 +442,8 @@ function renderResults() {
 
     $("#results-section").classList.remove("hidden");
     // 공유 버튼 표시
-    const shareBtn = $("#share-btn");
-    if (shareBtn && analysisResult.share_id) shareBtn.style.display = "inline-block";
+    const shareWrap = $("#share-wrap");
+    if (shareWrap && analysisResult.share_id) shareWrap.style.display = "inline-block";
     $$(".tab").forEach((t) => t.classList.remove("active"));
     $$(".tab")[0].classList.add("active");
     renderTab("draping");
