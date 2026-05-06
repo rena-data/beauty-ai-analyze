@@ -374,55 +374,176 @@ function renderTab(tab) {
     }
 }
 
-// ── Draping ──
+// ── Draping (1-1a: 4계절 비교 카드 + 드레이핑) ──
 function renderDraping(r) {
     const d = r.draping_simulation || {};
-    const mapColor = (arr, good) => (arr || []).map((c) => `
-        <div class="draping-item">
-            <div class="color-chip" style="background:${c.hex}"></div>
-            <div class="info"><div class="color-name">${c.color}</div><div class="effect">${c.effect}</div></div>
-        </div>`).join("");
+    const goodC = d.good_colors || [];
+    const badC = d.bad_colors || [];
+    const rates = r.season_rates || {};
+    const keywords = r.season_keywords || {};
+    const faceUrl = uploadedImageDataUrl || "";
 
+    // 4계절 비교 카드
+    const seasonCards = [
+        { key: "spring_warm", ...SM.spring_warm },
+        { key: "summer_cool", ...SM.summer_cool },
+        { key: "autumn_warm", ...SM.autumn_warm },
+        { key: "winter_cool", ...SM.winter_cool },
+    ].map(ss => {
+        const pct = rates[ss.key] || 0;
+        const isTop = ss.key === r.season_type;
+        const stars = Math.round(pct / 20);
+        const kw = keywords[ss.key] || ss.vibe;
+        const matchLabel = pct >= 80 ? "매우 잘 어울림" : pct >= 60 ? "잘 어울림" : pct >= 40 ? "보통" : "덜 어울림";
+        return `<div style="text-align:center;padding:0.6rem;border-radius:12px;border:2px solid ${isTop ? ss.accent : '#E8E8E8'};background:${isTop ? ss.accent+'10' : '#fff'};position:relative;min-width:0;">
+            ${isTop ? '<div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:'+ss.accent+';color:white;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:10px;">BEST MATCH</div>' : ''}
+            <div style="width:100%;height:80px;background:${ss.accent};border-radius:8px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;margin-top:${isTop?'4px':'0'};">
+                ${faceUrl ? `<img src="${faceUrl}" style="width:60px;height:60px;object-fit:cover;border-radius:50%;border:2px solid white;margin-bottom:4px;">` : ''}
+            </div>
+            <div style="font-size:0.75rem;font-weight:700;color:${ss.accent};margin-top:0.4rem;">${ss.emoji} ${ss.ko}</div>
+            <div style="font-size:0.65rem;color:var(--text-sub);margin-top:0.15rem;">${kw}</div>
+            <div style="font-size:0.7rem;color:#FFB300;margin-top:0.2rem;">${'★'.repeat(stars)}${'☆'.repeat(5-stars)}</div>
+            <div style="font-size:0.62rem;color:var(--text-sub);">어울림: ${matchLabel}</div>
+        </div>`;
+    }).join("");
+
+    // 드레이핑 Best/Worst with face
+    const drapCard = (c, border) => `<div style="text-align:center;flex:1;min-width:0;">
+        <div style="height:70px;background:${c.hex};border-radius:8px;display:flex;align-items:flex-end;justify-content:center;border:2px solid ${border};">
+            ${faceUrl ? `<img src="${faceUrl}" style="width:50px;height:50px;object-fit:cover;border-radius:50%;border:2px solid white;margin-bottom:4px;">` : ''}
+        </div>
+        <div style="font-size:0.72rem;font-weight:700;margin-top:4px;">${c.color}</div>
+        <div style="font-size:0.65rem;color:var(--text-sub);line-height:1.3;margin-top:2px;">${c.effect}</div>
+    </div>`;
+
+    // Best/Worst 큰 컬러바 (1-2)
     const best = r.best_colors || [], worst = r.worst_colors || [];
-    let colorsHtml = "";
-    if (best.length && typeof best[0] === "object") {
-        colorsHtml = `<div class="card" style="margin-top:1rem;">
-            <h3 class="section-title">추천 & 비추천 컬러</h3>
-            <div class="colors-grid">
-                <div><p style="font-weight:700;color:var(--green);margin-bottom:0.8rem;">BEST 컬러</p>
-                    ${best.map((c) => `<div class="color-item"><div class="chip" style="background:${c.hex}"></div><span class="name">${c.color}</span><span class="reason">${c.reason}</span></div>`).join("")}
-                </div>
-                <div><p style="font-weight:700;color:var(--red);margin-bottom:0.8rem;">WORST 컬러</p>
-                    ${worst.map((c) => `<div class="color-item"><div class="chip" style="background:${c.hex}"></div><span class="name">${c.color}</span><span class="reason">${c.reason}</span></div>`).join("")}
-                </div>
-            </div></div>`;
-    }
-    return `<div class="card">
+    const colorBarItem = (c) => `<div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;">
+        <div style="width:60px;height:20px;border-radius:6px;background:${c.hex};border:1px solid #e0e0e0;flex-shrink:0;"></div>
+        <span style="font-size:0.8rem;font-weight:600;">${c.color}</span>
+        <span style="font-size:0.72rem;color:var(--text-sub);">${c.reason || ''}</span>
+    </div>`;
+
+    return `
+    <!-- 4계절 비교 -->
+    <div class="card">
+        <h3 class="section-title">4계절 비교</h3>
+        <p class="section-sub">가장 잘 어울리는 컬러를 찾아보세요.</p>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem;">${seasonCards}</div>
+    </div>
+
+    <!-- 컬러 드레이핑 -->
+    <div class="card" style="margin-top:1rem;">
         <h3 class="section-title">컬러 드레이핑 시뮬레이션</h3>
-        <p class="section-sub">실제 드레이핑을 했을 때 얼굴에 나타나는 변화를 분석했습니다.</p>
-        <div class="draping-grid">
-            <div><p style="font-weight:700;color:var(--green);margin-bottom:1rem;">잘 어울리는 컬러</p>${mapColor(d.good_colors)}</div>
-            <div><p style="font-weight:700;color:var(--red);margin-bottom:1rem;">안 어울리는 컬러</p>${mapColor(d.bad_colors)}</div>
-        </div></div>${colorsHtml}`;
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+            <div>
+                <p style="font-weight:700;color:var(--green);margin-bottom:0.8rem;font-size:0.9rem;">잘 어울리는 컬러 (BEST 4)</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">${goodC.slice(0,4).map(c => drapCard(c,'#4CAF50')).join('')}</div>
+            </div>
+            <div>
+                <p style="font-weight:700;color:var(--red);margin-bottom:0.8rem;font-size:0.9rem;">안 어울리는 컬러 (WORST 4)</p>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">${badC.slice(0,4).map(c => drapCard(c,'#EF5350')).join('')}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 추천 & 비추천 컬러 바 -->
+    ${best.length ? `<div class="card" style="margin-top:1rem;">
+        <h3 class="section-title">추천 & 피해야 할 컬러</h3>
+        <div class="colors-grid">
+            <div>
+                <p style="font-weight:700;color:var(--green);margin-bottom:0.6rem;">BEST 5</p>
+                ${best.map(colorBarItem).join('')}
+            </div>
+            <div>
+                <p style="font-weight:700;color:var(--red);margin-bottom:0.6rem;">WORST</p>
+                ${worst.map(colorBarItem).join('')}
+            </div>
+        </div>
+    </div>` : ''}`;
 }
 
-// ── Face ──
+// ── Face (1-1b: 레이더 차트 + 개선) ──
+function drawRadarSVG(radar) {
+    if (!radar) return "";
+    const labels = ["밝기","채도","대비","온기","선명도"];
+    const keys = ["brightness","saturation","contrast","warmth","clarity"];
+    const vals = keys.map(k => (radar[k] || 3));
+    const cx = 80, cy = 80, R = 60;
+    const angleStep = (2 * Math.PI) / 5;
+    const startAngle = -Math.PI / 2;
+
+    // 배경 오각형 (5단계)
+    let bgLines = "";
+    for (let lv = 1; lv <= 5; lv++) {
+        const r = R * lv / 5;
+        const pts = Array.from({length:5}, (_,i) => {
+            const a = startAngle + i * angleStep;
+            return `${cx + r*Math.cos(a)},${cy + r*Math.sin(a)}`;
+        }).join(" ");
+        bgLines += `<polygon points="${pts}" fill="none" stroke="#E8E8E8" stroke-width="0.5"/>`;
+    }
+
+    // 축 선
+    let axisLines = "";
+    for (let i = 0; i < 5; i++) {
+        const a = startAngle + i * angleStep;
+        axisLines += `<line x1="${cx}" y1="${cy}" x2="${cx+R*Math.cos(a)}" y2="${cy+R*Math.sin(a)}" stroke="#E8E8E8" stroke-width="0.5"/>`;
+    }
+
+    // 데이터 폴리곤
+    const dataPts = vals.map((v, i) => {
+        const r = R * v / 5;
+        const a = startAngle + i * angleStep;
+        return `${cx + r*Math.cos(a)},${cy + r*Math.sin(a)}`;
+    }).join(" ");
+
+    // 라벨
+    const labelEls = labels.map((lb, i) => {
+        const a = startAngle + i * angleStep;
+        const lr = R + 18;
+        const x = cx + lr * Math.cos(a);
+        const y = cy + lr * Math.sin(a);
+        return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="8" fill="#6B6B6B" font-weight="600">${lb}</text>`;
+    }).join("");
+
+    return `<svg viewBox="0 0 160 160" style="width:160px;height:160px;">
+        ${bgLines}${axisLines}
+        <polygon points="${dataPts}" fill="rgba(232,160,191,0.25)" stroke="#E8A0BF" stroke-width="1.5"/>
+        ${labelEls}
+    </svg>`;
+}
+
 function renderFace(r) {
     const f = r.face_analysis || {};
-    const faceImg = uploadedImageDataUrl ? `<div style="text-align:center;margin-bottom:1.5rem;"><img src="${uploadedImageDataUrl}" style="width:180px;height:180px;object-fit:cover;border-radius:50%;border:4px solid var(--border);" alt=""></div>` : "";
+    const radar = r.face_radar || {};
+    const faceUrl = uploadedImageDataUrl || "";
+    const radarSVG = drawRadarSVG(radar);
+
     return `<div class="card">
         <h3 class="section-title">얼굴 인상 분석</h3>
-        ${faceImg}
-        <div class="face-grid">
-            <div class="analysis-block" style="border-left-color:#FFB6C1"><strong>피부</strong>${hexToChip(f.skin)}</div>
-            <div class="analysis-block" style="border-left-color:#87CEEB"><strong>눈동자</strong>${hexToChip(f.eyes)}</div>
-            <div class="analysis-block" style="border-left-color:#DEB887"><strong>머리카락</strong>${hexToChip(f.hair)}</div>
-            <div class="analysis-block" style="border-left-color:#C0C0C0"><strong>대비감</strong>${hexToChip(f.face_contrast)}</div>
+        <div style="display:flex;gap:1.5rem;align-items:flex-start;margin-bottom:1.5rem;">
+            ${faceUrl ? `<img src="${faceUrl}" style="width:140px;height:140px;object-fit:cover;border-radius:16px;border:3px solid var(--border);flex-shrink:0;">` : ''}
+            <div style="flex:1;">
+                <div class="face-grid" style="margin-bottom:0;">
+                    <div class="analysis-block" style="border-left-color:#FFB6C1"><strong>피부</strong>${hexToChip(f.skin)}</div>
+                    <div class="analysis-block" style="border-left-color:#87CEEB"><strong>눈동자</strong>${hexToChip(f.eyes)}</div>
+                    <div class="analysis-block" style="border-left-color:#DEB887"><strong>머리카락</strong>${hexToChip(f.hair)}</div>
+                    <div class="analysis-block" style="border-left-color:#C0C0C0"><strong>대비감</strong>${hexToChip(f.face_contrast)}</div>
+                </div>
+            </div>
         </div>
-        <div class="face-grid">
-            <div class="strength-box"><h4>나의 강점</h4><ul>${(f.strengths || []).map((s) => `<li>${s}</li>`).join("") || "<li>-</li>"}</ul></div>
-            <div class="improve-box"><h4>보완 포인트</h4><ul>${(f.improvements || []).map((s) => `<li>${s}</li>`).join("") || "<li>-</li>"}</ul></div>
-        </div></div>`;
+        <div style="display:flex;gap:1.5rem;align-items:flex-start;">
+            ${radarSVG ? `<div style="text-align:center;flex-shrink:0;">
+                <div style="font-size:0.8rem;font-weight:700;margin-bottom:0.3rem;">얼굴 분석 차트</div>
+                ${radarSVG}
+            </div>` : ''}
+            <div style="flex:1;">
+                <div class="strength-box" style="margin-bottom:0.6rem;"><h4>나의 강점</h4><ul>${(f.strengths || []).map(s => `<li>${s}</li>`).join("") || "<li>-</li>"}</ul></div>
+                <div class="improve-box"><h4>보완 포인트</h4><ul>${(f.improvements || []).map(s => `<li>${s}</li>`).join("") || "<li>-</li>"}</ul></div>
+            </div>
+        </div>
+    </div>`;
 }
 
 // ── Palette ──
@@ -443,24 +564,63 @@ async function renderPalette(el, r) {
     } catch { el.innerHTML = `<div class="card"><p>팔레트를 불러올 수 없습니다.</p></div>`; }
 }
 
-// ── Styling ──
+// ── Styling (1-1c: 메이크업 포인트 + 1-1d: 팔레트 3행 + 1-3: 패션 원형칩) ──
 function renderStyling(r) {
     const st = r.styling || {}, s = SM[r.season_type] || {};
+    const cp = r.color_palette || {};
+
+    // 메이크업 포인트 카드 (아이콘 + 설명)
+    const makeupCards = [
+        { icon: "💧", label: "베이스", text: st.makeup_base || "" },
+        { icon: "👁", label: "아이섀도", text: st.makeup_eyeshadow || "" },
+        { icon: "🩷", label: "치크", text: st.makeup_blush || "" },
+        { icon: "💋", label: "립", text: st.makeup_lip || "" },
+    ].map(m => `<div style="background:var(--bg);border-radius:12px;padding:0.8rem;text-align:center;">
+        <div style="font-size:1.5rem;margin-bottom:0.3rem;">${m.icon}</div>
+        <div style="font-size:0.8rem;font-weight:700;margin-bottom:0.3rem;">${m.label}</div>
+        <div style="font-size:0.75rem;color:var(--text-sub);line-height:1.5;">${hexToChip(m.text)}</div>
+    </div>`).join("");
+
+    // 컬러 팔레트 3행 (원형 칩)
+    const paletteRow = (label, colors) => {
+        if (!colors || !colors.length) return "";
+        return `<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+            <span style="font-size:0.75rem;font-weight:700;width:50px;flex-shrink:0;color:var(--text-sub);">${label}</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                ${colors.map(c => `<div style="text-align:center;" title="${c.color}">
+                    <div style="width:28px;height:28px;border-radius:50%;background:${c.hex};border:2px solid #e0e0e0;"></div>
+                </div>`).join("")}
+            </div>
+        </div>`;
+    };
+    const paletteHtml = (cp.basic || cp.point || cp.accent) ? `
+        <div style="margin-top:1rem;">
+            <p style="font-weight:700;margin-bottom:0.6rem;">추천 컬러 팔레트</p>
+            <div style="background:var(--bg);border-radius:12px;padding:1rem;">
+                ${paletteRow("베이직", cp.basic)}
+                ${paletteRow("포인트", cp.point)}
+                ${paletteRow("액센트", cp.accent)}
+            </div>
+        </div>` : "";
+
     return `<div class="card">
         <h3 class="section-title">스타일링 제안</h3>
-        <p style="font-weight:700;margin-bottom:0.8rem;">메이크업</p>
-        <div class="styling-makeup-grid">
-            <div class="analysis-block" style="border-left-color:#E8A0BF"><strong>립</strong>${hexToChip(st.makeup_lip)}</div>
-            <div class="analysis-block" style="border-left-color:#FFB6C1"><strong>블러셔</strong>${hexToChip(st.makeup_blush)}</div>
-            <div class="analysis-block" style="border-left-color:#DDA0DD"><strong>아이섀도</strong>${hexToChip(st.makeup_eyeshadow)}</div>
+
+        <p style="font-weight:700;margin-bottom:0.8rem;">메이크업 포인트</p>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem;margin-bottom:1.2rem;">
+            ${makeupCards}
         </div>
+
         <p style="font-weight:700;margin-bottom:0.8rem;">헤어컬러</p>
         <div class="hair-grid">
-            <div class="hair-good"><p>추천</p><p style="font-size:0.88rem;line-height:1.6">${hexToChip(st.hair_recommended)}</p></div>
-            <div class="hair-bad"><p>피하기</p><p style="font-size:0.88rem;line-height:1.6">${hexToChip(st.hair_avoid)}</p></div>
+            <div class="hair-good"><p>추천</p><p style="font-size:0.85rem;line-height:1.6">${hexToChip(st.hair_recommended)}</p></div>
+            <div class="hair-bad"><p>피하기</p><p style="font-size:0.85rem;line-height:1.6">${hexToChip(st.hair_avoid)}</p></div>
         </div>
+
         <p style="font-weight:700;margin-bottom:0.8rem;">패션 색 조합</p>
-        <div class="analysis-block" style="border-left-color:${s.accent || "var(--primary)"}">${hexToChip(st.fashion_combinations)}</div>
+        <div class="analysis-block" style="border-left-color:${s.accent || 'var(--primary)'}">${hexToChip(st.fashion_combinations)}</div>
+
+        ${paletteHtml}
     </div>`;
 }
 

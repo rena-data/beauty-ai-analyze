@@ -154,10 +154,32 @@ ANALYSIS_PROMPT = """이 사진의 인물에 대해 퍼스널컬러 + 얼굴 인
     {"color": "컬러명", "hex": "#XXXXXX", "reason": "이유"}
   ],
 
+  "face_radar": {
+    "brightness": 1~5 (밝기: 1=어두움, 5=매우밝음),
+    "saturation": 1~5 (채도: 1=뮤트, 5=선명),
+    "contrast": 1~5 (대비감: 1=저대비, 5=고대비),
+    "warmth": 1~5 (온기: 1=매우쿨, 5=매우웜),
+    "clarity": 1~5 (선명도: 1=흐림, 5=매우선명)
+  },
+
+  "season_keywords": {
+    "spring_warm": "밝음 · 생기 · 화사",
+    "summer_cool": "부드러움 · 투명감 · 청순",
+    "autumn_warm": "깊이 · 안정감 · 고급스러움",
+    "winter_cool": "선명함 · 대비 · 깨끗함"
+  },
+
+  "color_palette": {
+    "basic": [{"color": "컬러명", "hex": "#XXXXXX"}, ...] (베이직 컬러 4-5개),
+    "point": [{"color": "컬러명", "hex": "#XXXXXX"}, ...] (포인트 컬러 4-5개),
+    "accent": [{"color": "컬러명", "hex": "#XXXXXX"}, ...] (액센트 컬러 4-5개)
+  },
+
   "styling": {
     "makeup_lip": "립 추천 방향 (구체적 컬러명 포함, 2문장)",
     "makeup_blush": "블러셔 추천 (1-2문장)",
     "makeup_eyeshadow": "아이섀도 추천 (1-2문장)",
+    "makeup_base": "베이스 추천 (1문장)",
     "hair_recommended": "추천 헤어컬러 2-3개와 이유",
     "hair_avoid": "피해야 할 헤어컬러 1-2개와 이유",
     "fashion_combinations": "잘 어울리는 패션 색 조합 2-3가지 (구체적)"
