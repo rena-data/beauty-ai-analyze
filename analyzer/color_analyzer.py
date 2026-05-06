@@ -14,12 +14,37 @@ from .prompts import ANALYSIS_PROMPT, ANALYSIS_SYSTEM_PROMPT
 MAX_RETRIES = 3
 RETRY_DELAYS = [2, 5, 10]
 
+# 현재 사용 중인 키 인덱스
+_current_key_index = 0
+
+
+def _get_api_keys():
+    """메인 + 백업 API 키 목록 반환"""
+    keys = []
+    main = os.getenv("GOOGLE_API_KEY")
+    backup = os.getenv("GOOGLE_API_KEY_BACKUP")
+    if main:
+        keys.append(main)
+    if backup:
+        keys.append(backup)
+    if not keys:
+        raise ValueError("GOOGLE_API_KEY 환경변수가 설정되지 않았습니다.")
+    return keys
+
 
 def _get_client():
-    api_key = os.getenv("GOOGLE_API_KEY")
-    if not api_key:
-        raise ValueError("GOOGLE_API_KEY 환경변수가 설정되지 않았습니다.")
-    return genai.Client(api_key=api_key)
+    global _current_key_index
+    keys = _get_api_keys()
+    _current_key_index = _current_key_index % len(keys)
+    return genai.Client(api_key=keys[_current_key_index])
+
+
+def _switch_key():
+    """다음 백업 키로 전환"""
+    global _current_key_index
+    keys = _get_api_keys()
+    if len(keys) > 1:
+        _current_key_index = (_current_key_index + 1) % len(keys)
 
 
 def _image_to_part(image: Image.Image) -> types.Part:
@@ -38,14 +63,20 @@ def _parse_json_response(text: str) -> dict:
 
 
 def _call_with_retry(fn):
-    """503/429 에러 시 자동 재시도"""
+    """503/429 에러 시 키 전환 + 자동 재시도"""
     last_err = None
     for attempt in range(MAX_RETRIES):
         try:
             return fn()
         except Exception as e:
             err_str = str(e)
-            if "503" in err_str or "UNAVAILABLE" in err_str or "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+            if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+                _switch_key()  # 할당량 초과 시 백업 키로 전환
+                last_err = e
+                if attempt < MAX_RETRIES - 1:
+                    time.sleep(RETRY_DELAYS[attempt])
+                    continue
+            elif "503" in err_str or "UNAVAILABLE" in err_str:
                 last_err = e
                 if attempt < MAX_RETRIES - 1:
                     time.sleep(RETRY_DELAYS[attempt])
@@ -56,10 +87,10 @@ def _call_with_retry(fn):
 
 def analyze_image(image: Image.Image) -> dict:
     """이미지에서 퍼스널컬러를 분석하여 결과 반환 (얼굴 확인 포함)"""
-    client = _get_client()
     img_part = _image_to_part(image)
 
     def _call():
+        client = _get_client()  # 재시도 시 전환된 키로 새 클라이언트 생성
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=[ANALYSIS_PROMPT, img_part],
