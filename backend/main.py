@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -73,7 +73,7 @@ async def api_analyze(file: UploadFile = File(...)):
 
 
 @app.post("/api/fashion-match")
-async def api_fashion_match(file: UploadFile = File(...), season_type: str = "spring_warm"):
+async def api_fashion_match(file: UploadFile = File(...), season_type: str = Form("spring_warm")):
     """옷 사진 업로드 → 퍼스널컬러 매칭 분석"""
     if file.content_type not in ("image/jpeg", "image/png", "image/webp"):
         raise HTTPException(400, "지원하지 않는 이미지 형식입니다.")

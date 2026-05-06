@@ -283,6 +283,9 @@ async function runAnalysis() {
         }
     }, 3000);
 
+    // 로딩 중 퀴즈 표시
+    showLoadingQuiz();
+
     const form = new FormData();
     form.append("file", selectedFile);
     try {
@@ -431,7 +434,6 @@ function renderTab(tab) {
         case "fashion": renderProducts(el, r, "fashion"); break;
         case "detail": el.innerHTML = renderDetail(r); break;
         case "fashion-match": el.innerHTML = renderFashionMatch(r); initFashionMatchUpload(); break;
-        case "quiz": renderQuiz(el); break;
     }
 }
 
@@ -919,106 +921,52 @@ function renderFashionMatchResult(result) {
     </div>`;
 }
 
-// ── Quiz Game (2-2) ──
-let quizData = null;
-let quizIndex = 0;
-let quizScore = 0;
+// ── Loading Quiz (로딩 중 퀴즈 1문제) ──
+const LOADING_QUIZ = [
+    { celebrity: "수지", hint: "국민 첫사랑 배우 겸 가수", answer: "spring_warm", detail: "봄 웜톤 - 코랄, 피치 계열이 잘 어울려요" },
+    { celebrity: "김태희", hint: "대한민국 대표 미인 배우", answer: "summer_cool", detail: "여름 쿨톤 - 라벤더, 로즈 계열이 잘 어울려요" },
+    { celebrity: "전지현", hint: "'별에서 온 그대' 주연 배우", answer: "winter_cool", detail: "겨울 쿨톤 - 레드, 블랙, 화이트가 잘 어울려요" },
+    { celebrity: "아이유", hint: "국민 여동생, 가수 겸 배우", answer: "spring_warm", detail: "봄 웜톤 - 피치, 코랄 계열이 피부를 밝혀요" },
+    { celebrity: "화사", hint: "마마무 멤버, 파격 무대", answer: "autumn_warm", detail: "가을 웜톤 - 테라코타, 브릭 레드가 매력적" },
+    { celebrity: "지수", hint: "블랙핑크 멤버 겸 배우", answer: "winter_cool", detail: "겨울 쿨톤 - 비비드 레드, 버건디가 잘 어울려요" },
+    { celebrity: "송혜교", hint: "'더 글로리' 주연 배우", answer: "summer_cool", detail: "여름 쿨톤 - 로즈, 파스텔 핑크가 우아해요" },
+    { celebrity: "김연아", hint: "피겨 여왕, 국민 영웅", answer: "winter_cool", detail: "겨울 쿨톤 - 화이트, 블랙 대비가 세련돼요" },
+];
 
-async function renderQuiz(el) {
-    el.innerHTML = `<div class="card" style="text-align:center;">
-        <h3 class="section-title">퍼스널컬러 퀴즈</h3>
-        <p class="section-sub">이 연예인의 퍼스널컬러는? 맞혀보세요!</p>
-        <button id="quiz-start-btn" class="btn-primary" style="width:auto;">퀴즈 시작 (5문제)</button>
-    </div>`;
-    $("#quiz-start-btn").addEventListener("click", startQuiz);
-}
-
-async function startQuiz() {
-    const el = $("#tab-content");
-    el.innerHTML = `<div class="card"><div class="loading-content"><div class="spinner"></div><p>퀴즈 준비 중...</p></div></div>`;
-    try {
-        const resp = await fetch("/api/quiz?count=5");
-        quizData = await resp.json();
-        quizIndex = 0;
-        quizScore = 0;
-        showQuizQuestion(el);
-    } catch {
-        el.innerHTML = `<div class="card"><p>퀴즈를 불러올 수 없습니다.</p></div>`;
-    }
-}
-
-function showQuizQuestion(el) {
-    const qs = quizData.questions;
-    if (quizIndex >= qs.length) { showQuizResult(el); return; }
-    const q = qs[quizIndex];
-    const optionBtns = [
+function showLoadingQuiz() {
+    const el = $("#loading-quiz-content");
+    if (!el) return;
+    const q = LOADING_QUIZ[Math.floor(Math.random() * LOADING_QUIZ.length)];
+    const options = [
         { key: "spring_warm", ...SM.spring_warm },
         { key: "summer_cool", ...SM.summer_cool },
         { key: "autumn_warm", ...SM.autumn_warm },
         { key: "winter_cool", ...SM.winter_cool },
-    ].map(o => `<button class="quiz-option" data-answer="${o.key}" style="padding:0.8rem;border:2px solid var(--border);border-radius:12px;background:white;cursor:pointer;font-family:inherit;font-size:0.9rem;font-weight:600;transition:all 0.2s;">
-        ${o.emoji} ${o.ko}
-    </button>`).join("");
+    ];
 
-    el.innerHTML = `<div class="card" style="text-align:center;">
-        <div style="font-size:0.8rem;color:var(--text-sub);margin-bottom:0.5rem;">${quizIndex + 1} / ${qs.length}</div>
-        <div style="width:100%;height:6px;background:#F0F0F0;border-radius:3px;margin-bottom:1rem;">
-            <div style="width:${(quizIndex / qs.length) * 100}%;height:100%;background:var(--primary);border-radius:3px;transition:width 0.3s;"></div>
-        </div>
-        <h3 style="font-size:1.3rem;margin-bottom:0.3rem;">${q.celebrity}</h3>
-        <p style="color:var(--text-sub);font-size:0.85rem;margin-bottom:1.5rem;">${q.hint}</p>
-        <p style="font-weight:700;margin-bottom:1rem;">이 연예인의 퍼스널컬러는?</p>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;max-width:400px;margin:0 auto;" id="quiz-options">
-            ${optionBtns}
-        </div>
-        <div id="quiz-feedback" style="margin-top:1rem;min-height:60px;"></div>
-    </div>`;
+    el.innerHTML = `
+        <div style="text-align:center;">
+            <p style="font-size:1.1rem;font-weight:700;margin-bottom:0.2rem;">${q.celebrity}</p>
+            <p style="font-size:0.8rem;color:var(--text-sub);margin-bottom:0.8rem;">${q.hint}</p>
+            <p style="font-size:0.85rem;margin-bottom:0.6rem;">이 연예인의 퍼스널컬러는?</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;max-width:320px;margin:0 auto;">
+                ${options.map(o => `<button class="lq-opt" data-key="${o.key}" style="padding:0.5rem;border:2px solid var(--border);border-radius:10px;background:white;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600;transition:all 0.2s;">${o.emoji} ${o.ko}</button>`).join("")}
+            </div>
+            <div id="lq-feedback" style="margin-top:0.5rem;min-height:40px;"></div>
+        </div>`;
 
-    document.querySelectorAll(".quiz-option").forEach(btn => {
-        btn.addEventListener("click", () => handleQuizAnswer(btn, q, el));
+    el.querySelectorAll(".lq-opt").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const correct = btn.dataset.key === q.answer;
+            el.querySelectorAll(".lq-opt").forEach(b => {
+                b.style.pointerEvents = "none";
+                if (b.dataset.key === q.answer) { b.style.borderColor = "#4CAF50"; b.style.background = "#F0FFF0"; }
+                else if (b === btn && !correct) { b.style.borderColor = "#EF5350"; b.style.background = "#FFF0F0"; }
+            });
+            const fb = el.querySelector("#lq-feedback");
+            fb.innerHTML = `<div style="font-size:0.8rem;margin-top:0.3rem;color:${correct ? '#4CAF50' : '#EF5350'};font-weight:600;">${correct ? '정답!' : '아쉽!'} ${q.detail}</div>`;
+        });
     });
-}
-
-function handleQuizAnswer(btn, q, el) {
-    const selected = btn.dataset.answer;
-    const correct = selected === q.answer;
-    if (correct) quizScore++;
-
-    // 모든 버튼 비활성화
-    document.querySelectorAll(".quiz-option").forEach(b => {
-        b.style.pointerEvents = "none";
-        if (b.dataset.answer === q.answer) {
-            b.style.borderColor = "#4CAF50";
-            b.style.background = "#F0FFF0";
-        } else if (b === btn && !correct) {
-            b.style.borderColor = "#EF5350";
-            b.style.background = "#FFF0F0";
-        }
-    });
-
-    const fb = $("#quiz-feedback");
-    fb.innerHTML = `<div style="padding:0.8rem;border-radius:10px;background:${correct ? '#F0FFF0' : '#FFF0F0'};margin-top:0.5rem;">
-        <div style="font-weight:700;color:${correct ? '#4CAF50' : '#EF5350'};margin-bottom:0.3rem;">${correct ? '정답!' : '아쉽네요!'}</div>
-        <div style="font-size:0.82rem;color:var(--text-sub);">${q.detail}</div>
-    </div>`;
-
-    setTimeout(() => { quizIndex++; showQuizQuestion(el); }, 2000);
-}
-
-function showQuizResult(el) {
-    const total = quizData.questions.length;
-    const pct = Math.round(quizScore / total * 100);
-    const msg = pct >= 80 ? "퍼스널컬러 전문가시네요!" : pct >= 60 ? "꽤 잘 아시는데요?" : pct >= 40 ? "조금만 더 공부하면 전문가!" : "퍼스널컬러의 세계에 오신 걸 환영해요!";
-
-    el.innerHTML = `<div class="card" style="text-align:center;">
-        <div style="font-size:3rem;margin-bottom:0.5rem;">${pct >= 80 ? '🏆' : pct >= 60 ? '👏' : pct >= 40 ? '💪' : '📚'}</div>
-        <h3 style="margin-bottom:0.3rem;">${quizScore} / ${total} 정답</h3>
-        <div style="font-size:1.5rem;font-weight:800;color:var(--primary);margin-bottom:0.5rem;">${pct}점</div>
-        <p style="color:var(--text-sub);margin-bottom:1.5rem;">${msg}</p>
-        <button class="btn-primary" style="width:auto;" onclick="startQuiz()">다시 도전하기</button>
-    </div>`;
-
-    gEvent("quiz_complete", { score: quizScore, total: total });
 }
 
 // ─── Full Report Download ───
