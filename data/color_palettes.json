@@ -1,0 +1,102 @@
+{
+  "spring_warm": {
+    "name": "봄 웜톤",
+    "best": [
+      {"hex": "#FF6B6B", "name": "코랄 레드"},
+      {"hex": "#FFA07A", "name": "살몬"},
+      {"hex": "#FFD93D", "name": "선샤인 옐로우"},
+      {"hex": "#98D8AA", "name": "민트 그린"},
+      {"hex": "#FF8FAB", "name": "피치 핑크"},
+      {"hex": "#FBBF77", "name": "골든 베이지"},
+      {"hex": "#E8A0BF", "name": "로즈 핑크"},
+      {"hex": "#87CEEB", "name": "스카이 블루"},
+      {"hex": "#F4A460", "name": "캐멀"},
+      {"hex": "#FFB6C1", "name": "베이비 핑크"},
+      {"hex": "#FFDAB9", "name": "피치"},
+      {"hex": "#90EE90", "name": "라이트 그린"}
+    ],
+    "worst": [
+      {"hex": "#000000", "name": "블랙"},
+      {"hex": "#2F4F4F", "name": "차콜"},
+      {"hex": "#800020", "name": "버건디"},
+      {"hex": "#4A0E4E", "name": "딥 퍼플"},
+      {"hex": "#808080", "name": "그레이"},
+      {"hex": "#191970", "name": "네이비"}
+    ]
+  },
+  "summer_cool": {
+    "name": "여름 쿨톤",
+    "best": [
+      {"hex": "#C8A2C8", "name": "라벤더"},
+      {"hex": "#87CEEB", "name": "스카이 블루"},
+      {"hex": "#DDA0DD", "name": "라일락"},
+      {"hex": "#98D8C8", "name": "민트"},
+      {"hex": "#F0B8D0", "name": "로즈 핑크"},
+      {"hex": "#A0C4E8", "name": "소프트 블루"},
+      {"hex": "#C5B4E3", "name": "퍼플"},
+      {"hex": "#B0C4DE", "name": "스틸 블루"},
+      {"hex": "#D8BFD8", "name": "모브 핑크"},
+      {"hex": "#ADD8E6", "name": "파우더 블루"},
+      {"hex": "#FFB6C1", "name": "베이비 핑크"},
+      {"hex": "#E6E6FA", "name": "라벤더 안개"}
+    ],
+    "worst": [
+      {"hex": "#FF4500", "name": "오렌지 레드"},
+      {"hex": "#FF8C00", "name": "다크 오렌지"},
+      {"hex": "#FFD700", "name": "골드"},
+      {"hex": "#8B4513", "name": "브라운"},
+      {"hex": "#808000", "name": "올리브"},
+      {"hex": "#FF6347", "name": "토마토 레드"}
+    ]
+  },
+  "autumn_warm": {
+    "name": "가을 웜톤",
+    "best": [
+      {"hex": "#8B4513", "name": "새들 브라운"},
+      {"hex": "#CD853F", "name": "탄"},
+      {"hex": "#B8860B", "name": "다크 골드"},
+      {"hex": "#556B2F", "name": "올리브 그린"},
+      {"hex": "#A0522D", "name": "시에나"},
+      {"hex": "#D2691E", "name": "초콜릿"},
+      {"hex": "#BC8F8F", "name": "로지 브라운"},
+      {"hex": "#6B8E23", "name": "올리브 드랍"},
+      {"hex": "#DAA520", "name": "골든로드"},
+      {"hex": "#CC5500", "name": "버닝 오렌지"},
+      {"hex": "#8FBC8F", "name": "다크 씨 그린"},
+      {"hex": "#C19A6B", "name": "캐멀"}
+    ],
+    "worst": [
+      {"hex": "#FF69B4", "name": "핫 핑크"},
+      {"hex": "#00BFFF", "name": "딥 스카이 블루"},
+      {"hex": "#FF1493", "name": "딥 핑크"},
+      {"hex": "#E6E6FA", "name": "라벤더"},
+      {"hex": "#87CEEB", "name": "스카이 블루"},
+      {"hex": "#FFB6C1", "name": "베이비 핑크"}
+    ]
+  },
+  "winter_cool": {
+    "name": "겨울 쿨톤",
+    "best": [
+      {"hex": "#DC143C", "name": "크림슨 레드"},
+      {"hex": "#000000", "name": "블랙"},
+      {"hex": "#FFFFFF", "name": "퓨어 화이트"},
+      {"hex": "#0000CD", "name": "로얄 블루"},
+      {"hex": "#FF0066", "name": "쇼킹 핑크"},
+      {"hex": "#4B0082", "name": "인디고"},
+      {"hex": "#00CED1", "name": "다크 터콰이즈"},
+      {"hex": "#8B008B", "name": "다크 마젠타"},
+      {"hex": "#228B22", "name": "포레스트 그린"},
+      {"hex": "#FF1493", "name": "딥 핑크"},
+      {"hex": "#191970", "name": "미드나잇 네이비"},
+      {"hex": "#C0C0C0", "name": "실버"}
+    ],
+    "worst": [
+      {"hex": "#F5DEB3", "name": "밀"},
+      {"hex": "#DEB887", "name": "버니쉬 우드"},
+      {"hex": "#D2B48C", "name": "탄"},
+      {"hex": "#FFDAB9", "name": "피치 퍼프"},
+      {"hex": "#FFE4C4", "name": "비스크"},
+      {"hex": "#FAF0E6", "name": "리넨"}
+    ]
+  }
+}

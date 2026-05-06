@@ -1,0 +1,214 @@
+{
+  "spring_warm": {
+    "lip": [
+      {
+        "name": "리퀴드 멜팅 밤 #03 웜누드",
+        "brand": "이니스프리",
+        "price": 12000,
+        "category": "lip",
+        "reason": "자연스러운 웜 누드가 봄 웜톤 남성의 건강한 입술색",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000172610"
+      },
+      {
+        "name": "무드인핸서 립 글로우 #웜베이지",
+        "brand": "힌스",
+        "price": 18000,
+        "category": "lip",
+        "reason": "은은한 웜 베이지 립밤이 봄 웜톤에 자연스러운 혈색",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000179299"
+      }
+    ],
+    "eye": [],
+    "cheek": [],
+    "base": [
+      {
+        "name": "에센셜 스킨 누더 쿠션 #페어라이트",
+        "brand": "정샘물",
+        "price": 48000,
+        "category": "base",
+        "reason": "3년 연속 1위, 자연스러운 톤 보정이 봄 웜톤 남성에도 적합",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000139063"
+      },
+      {
+        "name": "커버 스테인 하이커버 쿠션 #Y21",
+        "brand": "VDL",
+        "price": 28000,
+        "category": "base",
+        "reason": "모공순삭 쿠션, 옐로우 베이스가 봄 웜톤 남성 피부에 자연스러운 커버",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000226512"
+      },
+      {
+        "name": "아쿠아 오아시스 톤업 선크림",
+        "brand": "토리든",
+        "price": 19000,
+        "category": "base",
+        "reason": "무신사 남성 스킨케어 인기 브랜드, 자연스러운 톤업+선케어",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000172610"
+      }
+    ]
+  },
+  "summer_cool": {
+    "lip": [
+      {
+        "name": "리퀴드 멜팅 밤 #05 쿨로즈",
+        "brand": "이니스프리",
+        "price": 12000,
+        "category": "lip",
+        "reason": "은은한 쿨 로즈가 여름 쿨톤 남성에 자연스러운 혈색",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000172610"
+      },
+      {
+        "name": "무드인핸서 립 글로우 #로즈",
+        "brand": "힌스",
+        "price": 18000,
+        "category": "lip",
+        "reason": "투명한 로즈 립밤이 쿨톤 남성에 건강한 입술 연출",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000179299"
+      }
+    ],
+    "eye": [],
+    "cheek": [],
+    "base": [
+      {
+        "name": "에센셜 스킨 누더 쿠션 #핑크라이트",
+        "brand": "정샘물",
+        "price": 48000,
+        "category": "base",
+        "reason": "핑크 베이스가 쿨톤 남성의 맑은 피부 표현",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000139063"
+      },
+      {
+        "name": "커버 스테인 하이커버 쿠션 #C21",
+        "brand": "VDL",
+        "price": 28000,
+        "category": "base",
+        "reason": "쿨 베이스 모공순삭 쿠션이 쿨톤 남성에 자연스러운 커버",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000226512"
+      },
+      {
+        "name": "아쿠아 오아시스 톤업 선크림",
+        "brand": "토리든",
+        "price": 19000,
+        "category": "base",
+        "reason": "남성 스킨케어 인기 1위 브랜드, 자연스러운 톤업",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000172610"
+      }
+    ]
+  },
+  "autumn_warm": {
+    "lip": [
+      {
+        "name": "리퀴드 멜팅 밤 #04 브라운누드",
+        "brand": "이니스프리",
+        "price": 12000,
+        "category": "lip",
+        "reason": "따뜻한 브라운 누드가 가을 웜톤 남성에 자연스러운 입술색",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000172610"
+      },
+      {
+        "name": "무드인핸서 립 글로우 #누드베이지",
+        "brand": "힌스",
+        "price": 18000,
+        "category": "lip",
+        "reason": "웜한 누드 립밤이 가을 웜톤 남성의 깔끔한 인상",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000179299"
+      }
+    ],
+    "eye": [],
+    "cheek": [],
+    "base": [
+      {
+        "name": "에센셜 스킨 누더 쿠션 #엔라이트",
+        "brand": "정샘물",
+        "price": 48000,
+        "category": "base",
+        "reason": "내추럴 베이지가 가을 웜톤 남성의 자연스러운 피부 표현",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000139063"
+      },
+      {
+        "name": "커버 스테인 퍼펙팅 파운데이션 #Y23",
+        "brand": "VDL",
+        "price": 32000,
+        "category": "base",
+        "reason": "어워즈 1등파데, 골든 베이지가 가을 웜톤 남성과 조화",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000185903"
+      },
+      {
+        "name": "아쿠아 오아시스 톤업 선크림",
+        "brand": "토리든",
+        "price": 19000,
+        "category": "base",
+        "reason": "남성 인기 1위 브랜드, 가을 웜톤에 자연스러운 톤업",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000172610"
+      }
+    ]
+  },
+  "winter_cool": {
+    "lip": [
+      {
+        "name": "리퀴드 멜팅 밤 #06 쿨핑크",
+        "brand": "이니스프리",
+        "price": 12000,
+        "category": "lip",
+        "reason": "선명한 쿨 핑크가 겨울 쿨톤 남성의 깔끔한 인상",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000172610"
+      },
+      {
+        "name": "무드인핸서 립 글로우 #클리어",
+        "brand": "힌스",
+        "price": 18000,
+        "category": "lip",
+        "reason": "투명한 글로우 립밤이 겨울 쿨톤 남성에 자연스러운 광택",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000179299"
+      }
+    ],
+    "eye": [],
+    "cheek": [],
+    "base": [
+      {
+        "name": "에센셜 스킨 누더 쿠션 #핑크라이트",
+        "brand": "정샘물",
+        "price": 48000,
+        "category": "base",
+        "reason": "핑크 베이스가 겨울 쿨톤 남성의 맑은 피부 유지",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000139063"
+      },
+      {
+        "name": "커버 스테인 퍼펙팅 파운데이션 #N21",
+        "brand": "VDL",
+        "price": 32000,
+        "category": "base",
+        "reason": "뉴트럴 베이스가 겨울 쿨톤 남성의 깨끗한 피부 표현",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000185903"
+      },
+      {
+        "name": "아쿠아 오아시스 톤업 선크림",
+        "brand": "토리든",
+        "price": 19000,
+        "category": "base",
+        "reason": "남성 스킨케어 인기 브랜드, 겨울 쿨톤에 자연스러운 톤업",
+        "image_url": "",
+        "buy_url": "https://www.oliveyoung.co.kr/store/goods/getGoodsDetail.do?goodsNo=A000000172610"
+      }
+    ]
+  }
+}

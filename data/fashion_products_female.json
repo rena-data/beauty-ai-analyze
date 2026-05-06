@@ -1,0 +1,404 @@
+{
+  "spring_warm": {
+    "top": [
+      {
+        "name": "릴렉스 핏 크루넥 반팔 티셔츠 [코랄]",
+        "brand": "무신사 스탠다드",
+        "price": 13890,
+        "category": "상의",
+        "reason": "밝은 코랄이 봄 웜톤의 얼굴을 환하게 밝혀주는 유니섹스 기본템",
+        "color_hex": "#FF8FAB",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996177"
+      },
+      {
+        "name": "오버사이즈 옥스포드 셔츠 [크림]",
+        "brand": "무신사 스탠다드",
+        "price": 35990,
+        "category": "상의",
+        "reason": "따뜻한 크림 옥스포드가 봄 웜톤에 세련된 캐주얼",
+        "color_hex": "#FFFDD0",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/2093486"
+      },
+      {
+        "name": "에센셜 쿨 코튼 2팩 티셔츠",
+        "brand": "커버낫",
+        "price": 39200,
+        "category": "상의",
+        "reason": "무신사 반팔 1위, 이너로도 활용 가능한 기본 티셔츠",
+        "color_hex": "#FFFFFF",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/1848166"
+      },
+      {
+        "name": "센터 로고 피그먼트 티셔츠 [오렌지]",
+        "brand": "커버낫",
+        "price": 59000,
+        "category": "상의",
+        "reason": "빈티지 피그먼트 오렌지가 봄 웜톤에 트렌디한 포인트",
+        "color_hex": "#FF8C00",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/6125526"
+      },
+      {
+        "name": "레이어드 크루넥 티셔츠 [베이지]",
+        "brand": "무신사 스탠다드",
+        "price": 15900,
+        "category": "상의",
+        "reason": "따뜻한 베이지 레이어드가 봄 웜톤의 내추럴한 무드",
+        "color_hex": "#F5F5DC",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/2086653"
+      }
+    ],
+    "bottom": [
+      {
+        "name": "와이드 치노 팬츠 [크림]",
+        "brand": "무신사 스탠다드",
+        "price": 39900,
+        "category": "하의",
+        "reason": "웜한 크림색이 봄 웜톤 상의와 자연스러운 밸런스",
+        "color_hex": "#FFFDD0",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      },
+      {
+        "name": "라이트 워시 스트레이트 데님",
+        "brand": "무신사 스탠다드",
+        "price": 49900,
+        "category": "하의",
+        "reason": "밝은 워싱 데님이 봄 웜톤의 경쾌한 캐주얼 연출",
+        "color_hex": "#ADD8E6",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      },
+      {
+        "name": "베이식 치노 팬츠 [베이지]",
+        "brand": "커버낫",
+        "price": 69000,
+        "category": "하의",
+        "reason": "클래식 베이지 치노가 봄 웜톤의 깔끔한 스타일링",
+        "color_hex": "#C19A6B",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/1848166"
+      }
+    ],
+    "outer": [
+      {
+        "name": "코튼 트렌치코트 [캐멀]",
+        "brand": "무신사 스탠다드",
+        "price": 99900,
+        "category": "아우터",
+        "reason": "캐멀 트렌치가 봄 웜톤에 클래식한 세련미",
+        "color_hex": "#C19A6B",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      },
+      {
+        "name": "라이트 블루종 자켓 [베이지]",
+        "brand": "커버낫",
+        "price": 89000,
+        "category": "아우터",
+        "reason": "따뜻한 베이지 블루종이 봄 웜톤의 캐주얼 아우터",
+        "color_hex": "#F5F5DC",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/1848166"
+      }
+    ]
+  },
+  "summer_cool": {
+    "top": [
+      {
+        "name": "릴렉스 핏 크루넥 반팔 티셔츠 [라벤더]",
+        "brand": "무신사 스탠다드",
+        "price": 13890,
+        "category": "상의",
+        "reason": "부드러운 라벤더가 여름 쿨톤의 우아한 인상 강조",
+        "color_hex": "#C8A2C8",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996177"
+      },
+      {
+        "name": "오버사이즈 옥스포드 셔츠 [스카이블루]",
+        "brand": "무신사 스탠다드",
+        "price": 35990,
+        "category": "상의",
+        "reason": "2026 트렌드 스카이블루가 여름 쿨톤의 투명감을 살림",
+        "color_hex": "#87CEEB",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/2093486"
+      },
+      {
+        "name": "릴렉스 핏 크루넥 반팔 티셔츠 [화이트]",
+        "brand": "무신사 스탠다드",
+        "price": 13890,
+        "category": "상의",
+        "reason": "클라우드 댄서 트렌드, 깨끗한 화이트가 쿨톤에 맑은 분위기",
+        "color_hex": "#FFFFFF",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996177"
+      },
+      {
+        "name": "오버사이즈 크루넥 티셔츠 [더스티 핑크]",
+        "brand": "무신사 스탠다드",
+        "price": 17890,
+        "category": "상의",
+        "reason": "뮤트한 더스티 핑크가 여름 쿨톤의 소프트한 매력",
+        "color_hex": "#F0B8D0",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/1382610"
+      },
+      {
+        "name": "리넨 블렌드 반팔 셔츠 [라이트그레이]",
+        "brand": "무신사 스탠다드",
+        "price": 29900,
+        "category": "상의",
+        "reason": "쿨한 라이트 그레이 리넨이 여름 쿨톤에 시원한 세련미",
+        "color_hex": "#D3D3D3",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/854337"
+      }
+    ],
+    "bottom": [
+      {
+        "name": "와이드 슬랙스 [라이트 그레이]",
+        "brand": "무신사 스탠다드",
+        "price": 39900,
+        "category": "하의",
+        "reason": "소프트 그레이가 쿨톤 상의와 조화로운 하의",
+        "color_hex": "#D3D3D3",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      },
+      {
+        "name": "미드 워시 스트레이트 데님",
+        "brand": "무신사 스탠다드",
+        "price": 49900,
+        "category": "하의",
+        "reason": "블루 워시 데님이 여름 쿨톤의 캐주얼 스타일링",
+        "color_hex": "#6495ED",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      }
+    ],
+    "outer": [
+      {
+        "name": "코튼 블레이저 [네이비]",
+        "brand": "무신사 스탠다드",
+        "price": 79900,
+        "category": "아우터",
+        "reason": "클래식 네이비가 여름 쿨톤의 세련된 포멀 아우터",
+        "color_hex": "#191970",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      },
+      {
+        "name": "라이트 윈드브레이커 [더스티블루]",
+        "brand": "커버낫",
+        "price": 79000,
+        "category": "아우터",
+        "reason": "뮤트한 블루가 여름 쿨톤에 가벼운 시즌 아우터",
+        "color_hex": "#B0C4DE",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/1848166"
+      }
+    ]
+  },
+  "autumn_warm": {
+    "top": [
+      {
+        "name": "베이식 크루넥 니트 [브라운]",
+        "brand": "무신사 스탠다드",
+        "price": 29900,
+        "category": "상의",
+        "reason": "깊은 브라운 니트가 가을 웜톤의 고급스러운 무드 완성",
+        "color_hex": "#8B4513",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      },
+      {
+        "name": "릴렉스 핏 옥스포드 셔츠 [카키]",
+        "brand": "무신사 스탠다드",
+        "price": 33890,
+        "category": "상의",
+        "reason": "올리브 카키가 가을 웜톤의 내추럴한 매력 강조",
+        "color_hex": "#556B2F",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/854337"
+      },
+      {
+        "name": "피그먼트 워싱 반팔티 [테라코타]",
+        "brand": "커버낫",
+        "price": 49000,
+        "category": "상의",
+        "reason": "빈티지 워싱 테라코타가 가을 웜톤에 트렌디한 무드",
+        "color_hex": "#CC5500",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/6125526"
+      },
+      {
+        "name": "베이식 크루넥 티셔츠 [캐멀]",
+        "brand": "무신사 스탠다드",
+        "price": 14390,
+        "category": "상의",
+        "reason": "따뜻한 캐멀이 가을 웜톤에 클래식한 고급감",
+        "color_hex": "#C19A6B",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      },
+      {
+        "name": "플란넬 체크 셔츠 [올리브]",
+        "brand": "커버낫",
+        "price": 69000,
+        "category": "상의",
+        "reason": "가을 무드의 올리브 체크가 웜톤에 자연스러운 멋",
+        "color_hex": "#6B8E23",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/1848166"
+      }
+    ],
+    "bottom": [
+      {
+        "name": "와이드 치노 팬츠 [다크 베이지]",
+        "brand": "무신사 스탠다드",
+        "price": 39900,
+        "category": "하의",
+        "reason": "깊은 베이지가 가을 웜톤의 따뜻한 톤과 조화",
+        "color_hex": "#C19A6B",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      },
+      {
+        "name": "더티 워싱 스트레이트 데님",
+        "brand": "무신사 스탠다드",
+        "price": 49900,
+        "category": "하의",
+        "reason": "2025 트렌드 더티 워싱이 가을 웜톤의 빈티지 스타일",
+        "color_hex": "#4A4A4A",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      }
+    ],
+    "outer": [
+      {
+        "name": "울 블렌드 싱글 코트 [초콜릿]",
+        "brand": "무신사 스탠다드",
+        "price": 129000,
+        "category": "아우터",
+        "reason": "초콜릿 브라운이 가을 웜톤의 시그니처 아우터",
+        "color_hex": "#D2691E",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      },
+      {
+        "name": "필드 자켓 [카키]",
+        "brand": "커버낫",
+        "price": 139000,
+        "category": "아우터",
+        "reason": "밀리터리 카키가 가을 웜톤에 자연스러운 멋",
+        "color_hex": "#6B8E23",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/1848166"
+      }
+    ]
+  },
+  "winter_cool": {
+    "top": [
+      {
+        "name": "베이식 크루넥 티셔츠 [블랙]",
+        "brand": "무신사 스탠다드",
+        "price": 14390,
+        "category": "상의",
+        "reason": "클래식 블랙이 겨울 쿨톤의 대비감을 극대화",
+        "color_hex": "#000000",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      },
+      {
+        "name": "릴렉스 핏 크루넥 반팔 티셔츠 [화이트]",
+        "brand": "무신사 스탠다드",
+        "price": 13890,
+        "category": "상의",
+        "reason": "선명한 퓨어 화이트가 겨울 쿨톤의 맑은 피부를 돋보이게",
+        "color_hex": "#FFFFFF",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996177"
+      },
+      {
+        "name": "오버사이즈 옥스포드 셔츠 [화이트]",
+        "brand": "무신사 스탠다드",
+        "price": 35990,
+        "category": "상의",
+        "reason": "깨끗한 화이트 셔츠가 겨울 쿨톤의 모던한 시크",
+        "color_hex": "#FFFFFF",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/2093486"
+      },
+      {
+        "name": "베이식 크루넥 니트 [네이비]",
+        "brand": "무신사 스탠다드",
+        "price": 29900,
+        "category": "상의",
+        "reason": "딥 네이비가 겨울 쿨톤의 세련된 겨울 무드",
+        "color_hex": "#191970",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      },
+      {
+        "name": "로고 반팔 티셔츠 [블랙]",
+        "brand": "디스이즈네버댓",
+        "price": 45000,
+        "category": "상의",
+        "reason": "스트릿 감성 블랙 티가 겨울 쿨톤에 강렬한 인상",
+        "color_hex": "#000000",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/brand/thisisneverthat"
+      }
+    ],
+    "bottom": [
+      {
+        "name": "슬림 스트레이트 슬랙스 [블랙]",
+        "brand": "무신사 스탠다드",
+        "price": 39900,
+        "category": "하의",
+        "reason": "선명한 블랙이 겨울 쿨톤의 모던한 실루엣 완성",
+        "color_hex": "#000000",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      },
+      {
+        "name": "다크 워시 스트레이트 데님 [네이비]",
+        "brand": "무신사 스탠다드",
+        "price": 49900,
+        "category": "하의",
+        "reason": "딥 네이비 데님이 겨울 쿨톤의 세련된 캐주얼",
+        "color_hex": "#191970",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      }
+    ],
+    "outer": [
+      {
+        "name": "울 블렌드 싱글 코트 [블랙]",
+        "brand": "무신사 스탠다드",
+        "price": 129000,
+        "category": "아우터",
+        "reason": "클래식 블랙 코트가 겨울 쿨톤의 시그니처 아우터",
+        "color_hex": "#000000",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      },
+      {
+        "name": "코튼 블레이저 [네이비]",
+        "brand": "무신사 스탠다드",
+        "price": 79900,
+        "category": "아우터",
+        "reason": "딥 네이비 블레이저가 겨울 쿨톤의 미니멀 시크",
+        "color_hex": "#191970",
+        "image_url": "",
+        "buy_url": "https://www.musinsa.com/products/996498"
+      }
+    ]
+  }
+}
