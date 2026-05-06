@@ -20,6 +20,7 @@ load_dotenv(ROOT / ".env")
 from analyzer.color_analyzer import analyze_image
 from analyzer.fashion_matcher import match_fashion
 from utils.image_utils import resize_for_analysis
+from utils.supabase_client import save_analysis, get_analysis, track_product_click
 
 app = FastAPI(title="Beauty AI Analyze API")
 
@@ -55,6 +56,10 @@ async def api_analyze(file: UploadFile = File(...)):
 
     try:
         result = analyze_image(resized)
+        # DB에 저장 (비동기, 실패해도 결과 반환)
+        analysis_id = save_analysis(result)
+        if analysis_id:
+            result["share_id"] = analysis_id
         return result
     except HTTPException:
         raise
@@ -90,6 +95,28 @@ async def api_fashion_match(file: UploadFile = File(...), season_type: str = "sp
         if "503" in msg or "UNAVAILABLE" in msg:
             raise HTTPException(503, "AI 서버가 일시적으로 과부하 상태입니다. 잠시 후 다시 시도해주세요.")
         raise HTTPException(500, f"매칭 분석 중 오류가 발생했습니다: {msg}")
+
+
+@app.get("/api/share/{analysis_id}")
+async def get_shared_analysis(analysis_id: str):
+    """공유 URL로 분석 결과 조회"""
+    result = get_analysis(analysis_id)
+    if not result:
+        raise HTTPException(404, "분석 결과를 찾을 수 없습니다.")
+    return result
+
+
+@app.post("/api/track-click")
+async def api_track_click(data: dict):
+    """제품 클릭 추적"""
+    track_product_click(
+        season_type=data.get("season_type", ""),
+        gender=data.get("gender", ""),
+        brand=data.get("brand", ""),
+        name=data.get("name", ""),
+        category=data.get("category", ""),
+    )
+    return {"ok": True}
 
 
 @app.get("/api/products/{season_type}")

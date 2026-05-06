@@ -21,9 +21,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const analyzeBtn = $("#analyze-btn");
     const resetBtn = $("#reset-btn");
     const dlBtn = $("#download-report-btn");
+    const shareBtn = $("#share-btn");
     if (analyzeBtn) analyzeBtn.addEventListener("click", runAnalysis);
     if (resetBtn) resetBtn.addEventListener("click", resetAll);
     if (dlBtn) dlBtn.addEventListener("click", downloadReport);
+    if (shareBtn) shareBtn.addEventListener("click", copyShareUrl);
+
+    // 공유 URL로 접속한 경우 결과 로드
+    checkSharedUrl();
 });
 
 // ─── Cookie Consent ───
@@ -160,6 +165,57 @@ function hexToChip(text) {
     return text.replace(/#([0-9A-Fa-f]{6})\b/g, (match) =>
         `<span style="display:inline-block;width:14px;height:14px;border-radius:4px;border:1px solid #ddd;background-color:${match};vertical-align:middle;margin:0 2px;"></span>`
     );
+}
+
+// ─── Product Click Tracking (Supabase + GA4) ───
+function trackClick(brand, name, category) {
+    gEvent("product_click", { brand, product: name });
+    const r = analysisResult;
+    if (!r) return;
+    fetch("/api/track-click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            season_type: r.season_type,
+            gender: (document.getElementById("prof-gender") || {}).value || "",
+            brand, name, category,
+        }),
+    }).catch(() => {});
+}
+
+// ─── Share URL ───
+function getShareUrl() {
+    if (!analysisResult || !analysisResult.share_id) return null;
+    return `${location.origin}?share=${analysisResult.share_id}`;
+}
+
+// ─── Share URL Copy ───
+function copyShareUrl() {
+    const url = getShareUrl();
+    if (!url) { alert("공유 링크를 생성할 수 없습니다."); return; }
+    navigator.clipboard.writeText(url).then(() => {
+        const btn = $("#share-btn");
+        btn.textContent = "링크 복사됨!";
+        setTimeout(() => { btn.textContent = "결과 공유 링크 복사"; }, 2000);
+    }).catch(() => {
+        prompt("아래 링크를 복사하세요:", url);
+    });
+}
+
+// ─── Shared URL Load ───
+async function checkSharedUrl() {
+    const params = new URLSearchParams(location.search);
+    const shareId = params.get("share");
+    if (!shareId) return;
+
+    try {
+        const resp = await fetch(`/api/share/${shareId}`);
+        if (!resp.ok) return;
+        analysisResult = await resp.json();
+        renderResults();
+        // 공유 결과는 업로드 섹션 숨기기
+        $("#upload-section").classList.add("hidden");
+    } catch { }
 }
 
 // ─── GA4 Event Helper ───
@@ -352,6 +408,9 @@ function renderResults() {
         </div>`;
 
     $("#results-section").classList.remove("hidden");
+    // 공유 버튼 표시
+    const shareBtn = $("#share-btn");
+    if (shareBtn && analysisResult.share_id) shareBtn.style.display = "inline-block";
     $$(".tab").forEach((t) => t.classList.remove("active"));
     $$(".tab")[0].classList.add("active");
     renderTab("draping");
@@ -642,7 +701,7 @@ function productCard(item, type) {
         : `<div class="product-img-overlay"><span class="brand-text">${brand}</span><span class="product-text">${item.name.length > 20 ? item.name.slice(0,20)+"..." : item.name}</span></div>`;
 
     const dot = type === "fashion" && item.color_hex ? `<span class="fashion-color" style="background:${item.color_hex}"></span>` : "";
-    const buyBtn = buyUrl ? `<a href="${buyUrl}" target="_blank" rel="noopener" class="buy-link" onclick="gEvent('product_click',{brand:'${brand}',product:'${item.name.replace(/'/g,"")}'})">구매하기 →</a>` : "";
+    const buyBtn = buyUrl ? `<a href="${buyUrl}" target="_blank" rel="noopener" class="buy-link" onclick="trackClick('${brand}','${item.name.replace(/'/g,"")}','${item.category||""}')">구매하기 →</a>` : "";
 
     return `<div class="product-card">
         <div class="product-img" style="background:linear-gradient(135deg,${colorHex}22,${colorHex}11);">${imgInner}</div>
