@@ -154,6 +154,14 @@ function initPrivacyModal() {
     if (termsBtn) termsBtn.addEventListener("click", (e) => { e.preventDefault(); modal.classList.remove("hidden"); });
 }
 
+// ─── Hex to Color Chip ───
+function hexToChip(text) {
+    if (!text) return "";
+    return text.replace(/#([0-9A-Fa-f]{6})\b/g, (match) =>
+        `<span style="display:inline-block;width:14px;height:14px;border-radius:4px;border:1px solid #ddd;background-color:${match};vertical-align:middle;margin:0 2px;"></span>`
+    );
+}
+
 // ─── GA4 Event Helper ───
 function gEvent(name, params) {
     if (typeof gtag === "function") gtag("event", name, params || {});
@@ -353,10 +361,10 @@ function renderFace(r) {
         <h3 class="section-title">얼굴 인상 분석</h3>
         ${faceImg}
         <div class="face-grid">
-            <div class="analysis-block" style="border-left-color:#FFB6C1"><strong>피부</strong>${f.skin || ""}</div>
-            <div class="analysis-block" style="border-left-color:#87CEEB"><strong>눈동자</strong>${f.eyes || ""}</div>
-            <div class="analysis-block" style="border-left-color:#DEB887"><strong>머리카락</strong>${f.hair || ""}</div>
-            <div class="analysis-block" style="border-left-color:#C0C0C0"><strong>대비감</strong>${f.face_contrast || ""}</div>
+            <div class="analysis-block" style="border-left-color:#FFB6C1"><strong>피부</strong>${hexToChip(f.skin)}</div>
+            <div class="analysis-block" style="border-left-color:#87CEEB"><strong>눈동자</strong>${hexToChip(f.eyes)}</div>
+            <div class="analysis-block" style="border-left-color:#DEB887"><strong>머리카락</strong>${hexToChip(f.hair)}</div>
+            <div class="analysis-block" style="border-left-color:#C0C0C0"><strong>대비감</strong>${hexToChip(f.face_contrast)}</div>
         </div>
         <div class="face-grid">
             <div class="strength-box"><h4>나의 강점</h4><ul>${(f.strengths || []).map((s) => `<li>${s}</li>`).join("") || "<li>-</li>"}</ul></div>
@@ -389,17 +397,17 @@ function renderStyling(r) {
         <h3 class="section-title">스타일링 제안</h3>
         <p style="font-weight:700;margin-bottom:0.8rem;">메이크업</p>
         <div class="styling-makeup-grid">
-            <div class="analysis-block" style="border-left-color:#E8A0BF"><strong>립</strong>${st.makeup_lip || ""}</div>
-            <div class="analysis-block" style="border-left-color:#FFB6C1"><strong>블러셔</strong>${st.makeup_blush || ""}</div>
-            <div class="analysis-block" style="border-left-color:#DDA0DD"><strong>아이섀도</strong>${st.makeup_eyeshadow || ""}</div>
+            <div class="analysis-block" style="border-left-color:#E8A0BF"><strong>립</strong>${hexToChip(st.makeup_lip)}</div>
+            <div class="analysis-block" style="border-left-color:#FFB6C1"><strong>블러셔</strong>${hexToChip(st.makeup_blush)}</div>
+            <div class="analysis-block" style="border-left-color:#DDA0DD"><strong>아이섀도</strong>${hexToChip(st.makeup_eyeshadow)}</div>
         </div>
         <p style="font-weight:700;margin-bottom:0.8rem;">헤어컬러</p>
         <div class="hair-grid">
-            <div class="hair-good"><p>추천</p><p style="font-size:0.88rem;line-height:1.6">${st.hair_recommended || ""}</p></div>
-            <div class="hair-bad"><p>피하기</p><p style="font-size:0.88rem;line-height:1.6">${st.hair_avoid || ""}</p></div>
+            <div class="hair-good"><p>추천</p><p style="font-size:0.88rem;line-height:1.6">${hexToChip(st.hair_recommended)}</p></div>
+            <div class="hair-bad"><p>피하기</p><p style="font-size:0.88rem;line-height:1.6">${hexToChip(st.hair_avoid)}</p></div>
         </div>
         <p style="font-weight:700;margin-bottom:0.8rem;">패션 색 조합</p>
-        <div class="analysis-block" style="border-left-color:${s.accent || "var(--primary)"}">${st.fashion_combinations || ""}</div>
+        <div class="analysis-block" style="border-left-color:${s.accent || "var(--primary)"}">${hexToChip(st.fashion_combinations)}</div>
     </div>`;
 }
 
