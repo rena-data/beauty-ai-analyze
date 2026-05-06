@@ -2,7 +2,7 @@
 
 AI 기반 퍼스널컬러 분석 & 맞춤 뷰티/패션 추천 웹 서비스
 
-**Live:** https://beauty-ai-analyze.onrender.com
+**Live:** https://ai-test-hub.onrender.com
 
 ---
 

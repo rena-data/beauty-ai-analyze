@@ -688,7 +688,7 @@ async function downloadReport() {
 
         <div style="display:flex;justify-content:space-between;padding:8px 24px;font-size:7px;color:#ccc;border-top:1px solid #eee;margin-top:4px;">
             <span>Beauty AI Analyze</span>
-            <span>beauty-ai-analyze.onrender.com</span>
+            <span>ai-test-hub.onrender.com</span>
         </div>
     </div>`;
 
