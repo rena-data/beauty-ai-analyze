@@ -124,6 +124,22 @@ async def get_products(season_type: str, gender: str = ""):
     }
 
 
+@app.get("/api/quiz")
+async def get_quiz(count: int = 5):
+    """퍼스널컬러 퀴즈 랜덤 출제"""
+    import random
+    data_dir = ROOT / "data"
+    with open(data_dir / "quiz_data.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+    questions = data.get("questions", [])
+    count = min(count, len(questions))
+    selected = random.sample(questions, count)
+    # 정답 제거해서 클라이언트에 전달
+    for q in selected:
+        q["options"] = ["spring_warm", "summer_cool", "autumn_warm", "winter_cool"]
+    return {"questions": selected}
+
+
 @app.get("/api/palettes/{season_type}")
 async def get_palette(season_type: str):
     """시즌별 컬러 팔레트"""

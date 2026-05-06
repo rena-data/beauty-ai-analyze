@@ -1,0 +1,109 @@
+{
+  "questions": [
+    {
+      "id": 1,
+      "celebrity": "수지",
+      "hint": "국민 첫사랑으로 불리는 배우 겸 가수",
+      "answer": "spring_warm",
+      "detail": "봄 웜톤 - 밝고 화사한 코랄, 피치 계열이 잘 어울려요"
+    },
+    {
+      "id": 2,
+      "celebrity": "김태희",
+      "hint": "대한민국 대표 미인으로 손꼽히는 배우",
+      "answer": "summer_cool",
+      "detail": "여름 쿨톤 - 부드러운 라벤더, 로즈 계열이 잘 어울려요"
+    },
+    {
+      "id": 3,
+      "celebrity": "전지현",
+      "hint": "'별에서 온 그대' '킹덤' 주연 배우",
+      "answer": "winter_cool",
+      "detail": "겨울 쿨톤 - 선명한 레드, 블랙, 화이트가 잘 어울려요"
+    },
+    {
+      "id": 4,
+      "celebrity": "아이유",
+      "hint": "국민 여동생에서 명품 배우로, 가수 겸 배우",
+      "answer": "spring_warm",
+      "detail": "봄 웜톤 - 투명한 피치, 코랄 계열이 피부를 환하게 밝혀요"
+    },
+    {
+      "id": 5,
+      "celebrity": "제니 (블랙핑크)",
+      "hint": "블랙핑크 멤버이자 솔로 아티스트",
+      "answer": "spring_warm",
+      "detail": "봄 웜톤 - 화사한 코랄, 오렌지 계열이 잘 어울려요"
+    },
+    {
+      "id": 6,
+      "celebrity": "송혜교",
+      "hint": "'태양의 후예' '더 글로리' 주연 배우",
+      "answer": "summer_cool",
+      "detail": "여름 쿨톤 - 차분한 로즈, 파스텔 핑크가 우아함을 더해요"
+    },
+    {
+      "id": 7,
+      "celebrity": "화사 (마마무)",
+      "hint": "마마무 멤버, 파격적인 무대로 유명",
+      "answer": "autumn_warm",
+      "detail": "가을 웜톤 - 테라코타, 브릭 레드가 깊은 매력을 살려요"
+    },
+    {
+      "id": 8,
+      "celebrity": "지수 (블랙핑크)",
+      "hint": "블랙핑크 멤버이자 '설강화' 주연 배우",
+      "answer": "winter_cool",
+      "detail": "겨울 쿨톤 - 비비드 레드, 버건디가 강렬한 인상을 줘요"
+    },
+    {
+      "id": 9,
+      "celebrity": "윤아 (소녀시대)",
+      "hint": "소녀시대 멤버이자 배우, CF 퀸",
+      "answer": "spring_warm",
+      "detail": "봄 웜톤 - 밝은 피치, 살몬 핑크가 생기를 더해요"
+    },
+    {
+      "id": 10,
+      "celebrity": "김연아",
+      "hint": "피겨 여왕, 대한민국 국민 영웅",
+      "answer": "winter_cool",
+      "detail": "겨울 쿨톤 - 퓨어 화이트, 블랙의 대비가 세련미를 극대화해요"
+    },
+    {
+      "id": 11,
+      "celebrity": "한소희",
+      "hint": "'나의 해방일지' '경성크리처' 주연 배우",
+      "answer": "spring_warm",
+      "detail": "봄 웜톤 - 살구, 코랄 계열이 맑고 깨끗한 피부를 강조해요"
+    },
+    {
+      "id": 12,
+      "celebrity": "아이린 (레드벨벳)",
+      "hint": "레드벨벳 리더, 빙의의 미모로 유명",
+      "answer": "summer_cool",
+      "detail": "여름 쿨톤 - 소프트 핑크, 라벤더가 청순한 분위기를 완성해요"
+    },
+    {
+      "id": 13,
+      "celebrity": "선미",
+      "hint": "'가시나' '사이렌' 등 히트곡 보유 솔로 가수",
+      "answer": "autumn_warm",
+      "detail": "가을 웜톤 - 골드, 올리브 계열이 독보적 분위기를 만들어요"
+    },
+    {
+      "id": 14,
+      "celebrity": "이영애",
+      "hint": "'대장금' 주연, 한류 원조 배우",
+      "answer": "winter_cool",
+      "detail": "겨울 쿨톤 - 깊은 버건디, 네이비가 기품 있는 인상을 줘요"
+    },
+    {
+      "id": 15,
+      "celebrity": "현아",
+      "hint": "'빨개요' '버블팝' 등 파격 무대의 솔로 가수",
+      "answer": "autumn_warm",
+      "detail": "가을 웜톤 - 브릭 레드, 머스타드가 개성 있는 매력을 살려요"
+    }
+  ]
+}
