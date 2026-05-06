@@ -921,7 +921,7 @@ function renderFashionMatchResult(result) {
     </div>`;
 }
 
-// ── Loading Quiz (로딩 중 퀴즈 1문제) ──
+// ── Loading Quiz (로딩 중 퀴즈 2~3문제 연속) ──
 const LOADING_QUIZ = [
     { celebrity: "수지", hint: "국민 첫사랑 배우 겸 가수", answer: "spring_warm", detail: "봄 웜톤 - 코랄, 피치 계열이 잘 어울려요" },
     { celebrity: "김태희", hint: "대한민국 대표 미인 배우", answer: "summer_cool", detail: "여름 쿨톤 - 라벤더, 로즈 계열이 잘 어울려요" },
@@ -931,12 +931,40 @@ const LOADING_QUIZ = [
     { celebrity: "지수", hint: "블랙핑크 멤버 겸 배우", answer: "winter_cool", detail: "겨울 쿨톤 - 비비드 레드, 버건디가 잘 어울려요" },
     { celebrity: "송혜교", hint: "'더 글로리' 주연 배우", answer: "summer_cool", detail: "여름 쿨톤 - 로즈, 파스텔 핑크가 우아해요" },
     { celebrity: "김연아", hint: "피겨 여왕, 국민 영웅", answer: "winter_cool", detail: "겨울 쿨톤 - 화이트, 블랙 대비가 세련돼요" },
+    { celebrity: "제니", hint: "블랙핑크 멤버, 솔로 아티스트", answer: "spring_warm", detail: "봄 웜톤 - 화사한 코랄, 오렌지가 잘 어울려요" },
+    { celebrity: "윤아", hint: "소녀시대 멤버, CF 퀸", answer: "spring_warm", detail: "봄 웜톤 - 밝은 피치, 살몬 핑크가 생기를 더해요" },
+    { celebrity: "아이린", hint: "레드벨벳 리더, 빙의 미모", answer: "summer_cool", detail: "여름 쿨톤 - 소프트 핑크, 라벤더가 청순해요" },
+    { celebrity: "이영애", hint: "'대장금' 주연, 한류 원조", answer: "winter_cool", detail: "겨울 쿨톤 - 버건디, 네이비가 기품 있어요" },
 ];
+
+let _lqQuestions = [];
+let _lqIndex = 0;
+let _lqScore = 0;
 
 function showLoadingQuiz() {
     const el = $("#loading-quiz-content");
     if (!el) return;
-    const q = LOADING_QUIZ[Math.floor(Math.random() * LOADING_QUIZ.length)];
+
+    // 3문제 랜덤 선택 (중복 없이)
+    const shuffled = [...LOADING_QUIZ].sort(() => Math.random() - 0.5);
+    _lqQuestions = shuffled.slice(0, 3);
+    _lqIndex = 0;
+    _lqScore = 0;
+
+    renderLoadingQuizQuestion(el);
+}
+
+function renderLoadingQuizQuestion(el) {
+    if (_lqIndex >= _lqQuestions.length) {
+        el.innerHTML = `<div style="text-align:center;padding:0.5rem;">
+            <div style="font-size:1.2rem;margin-bottom:0.3rem;">${_lqScore >= 2 ? '🎉' : '💪'}</div>
+            <div style="font-size:0.9rem;font-weight:700;">${_lqScore} / ${_lqQuestions.length} 정답!</div>
+            <div style="font-size:0.8rem;color:var(--text-sub);margin-top:0.2rem;">${_lqScore >= 2 ? '퍼스널컬러 감각이 있으시네요!' : '분석 결과로 더 알아보세요!'}</div>
+        </div>`;
+        return;
+    }
+
+    const q = _lqQuestions[_lqIndex];
     const options = [
         { key: "spring_warm", ...SM.spring_warm },
         { key: "summer_cool", ...SM.summer_cool },
@@ -946,25 +974,33 @@ function showLoadingQuiz() {
 
     el.innerHTML = `
         <div style="text-align:center;">
+            <div style="font-size:0.72rem;color:var(--text-sub);margin-bottom:0.4rem;">${_lqIndex + 1} / ${_lqQuestions.length}</div>
             <p style="font-size:1.1rem;font-weight:700;margin-bottom:0.2rem;">${q.celebrity}</p>
-            <p style="font-size:0.8rem;color:var(--text-sub);margin-bottom:0.8rem;">${q.hint}</p>
-            <p style="font-size:0.85rem;margin-bottom:0.6rem;">이 연예인의 퍼스널컬러는?</p>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;max-width:320px;margin:0 auto;">
-                ${options.map(o => `<button class="lq-opt" data-key="${o.key}" style="padding:0.5rem;border:2px solid var(--border);border-radius:10px;background:white;cursor:pointer;font-family:inherit;font-size:0.82rem;font-weight:600;transition:all 0.2s;">${o.emoji} ${o.ko}</button>`).join("")}
+            <p style="font-size:0.78rem;color:var(--text-sub);margin-bottom:0.6rem;">${q.hint}</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;max-width:300px;margin:0 auto;">
+                ${options.map(o => `<button class="lq-opt" data-key="${o.key}" style="padding:0.45rem;border:2px solid var(--border);border-radius:10px;background:white;cursor:pointer;font-family:inherit;font-size:0.8rem;font-weight:600;transition:all 0.2s;">${o.emoji} ${o.ko}</button>`).join("")}
             </div>
-            <div id="lq-feedback" style="margin-top:0.5rem;min-height:40px;"></div>
+            <div id="lq-feedback" style="margin-top:0.4rem;min-height:30px;"></div>
         </div>`;
 
     el.querySelectorAll(".lq-opt").forEach(btn => {
         btn.addEventListener("click", () => {
             const correct = btn.dataset.key === q.answer;
+            if (correct) _lqScore++;
+
             el.querySelectorAll(".lq-opt").forEach(b => {
                 b.style.pointerEvents = "none";
                 if (b.dataset.key === q.answer) { b.style.borderColor = "#4CAF50"; b.style.background = "#F0FFF0"; }
                 else if (b === btn && !correct) { b.style.borderColor = "#EF5350"; b.style.background = "#FFF0F0"; }
             });
+
             const fb = el.querySelector("#lq-feedback");
-            fb.innerHTML = `<div style="font-size:0.8rem;margin-top:0.3rem;color:${correct ? '#4CAF50' : '#EF5350'};font-weight:600;">${correct ? '정답!' : '아쉽!'} ${q.detail}</div>`;
+            fb.innerHTML = `<div style="font-size:0.78rem;color:${correct ? '#4CAF50' : '#EF5350'};font-weight:600;">${correct ? '정답!' : '아쉽!'} ${q.detail}</div>`;
+
+            setTimeout(() => {
+                _lqIndex++;
+                renderLoadingQuizQuestion(el);
+            }, 1800);
         });
     });
 }
