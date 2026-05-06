@@ -14,3 +14,9 @@ components/
 # 블로그 글 (로컬 전용)
 blog_post*.md
 blog_ready*.md
+
+# PPT 및 생성 스크립트 (로컬 전용)
+*.pptx
+generate_*.py
+screenshots/
+portfolio/
