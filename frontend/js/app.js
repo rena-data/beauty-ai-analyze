@@ -551,91 +551,144 @@ async function downloadReport() {
     const faceImg = uploadedImageDataUrl || "";
 
     // Build one-page report HTML
+    const goodC = d.good_colors || [];
+    const badC = d.bad_colors || [];
+    const ut = r.undertone || "";
+    const shortUt = ut.includes("(") ? ut.split("(")[0].trim() : ut;
+
+    // 얼굴+컬러 배경 드레이핑 카드 생성
+    const drapeFace = (colors, label, borderColor) => colors.slice(0, 4).map(c => `
+        <div style="text-align:center;">
+            <div style="width:90px;height:110px;background:${c.hex};border-radius:10px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border:2px solid ${borderColor};">
+                ${faceImg ? `<img src="${faceImg}" style="width:80px;height:80px;object-fit:cover;border-radius:50%;margin-bottom:6px;border:2px solid white;">` : ""}
+            </div>
+            <div style="font-size:9px;font-weight:700;margin-top:4px;color:#2D2D2D;">${c.color}</div>
+            <div style="font-size:7.5px;color:#6B6B6B;line-height:1.3;max-width:90px;margin-top:2px;">${c.effect}</div>
+        </div>`).join("");
+
+    // 큰 컬러바 + 설명
+    const colorBar = (colors, label, labelColor) => colors.map(c => `
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <div style="width:80px;height:22px;border-radius:6px;background:${c.hex};border:1px solid #e0e0e0;flex-shrink:0;"></div>
+            <div style="font-size:8px;color:#2D2D2D;line-height:1.4;"><b>${c.color}</b> ${c.reason || ""}</div>
+        </div>`).join("");
+
     const report = $("#full-report");
     report.classList.remove("hidden");
     report.innerHTML = `
     <div class="report-page" id="report-capture">
         <!-- Header -->
-        <div class="rpt-header" style="background:linear-gradient(135deg,${s.accent}cc,${s.accent}66);">
-            <div class="rpt-header-top">
-                <div class="rpt-badge">Personal Color & Face Analysis Report</div>
-                <div class="rpt-conf">확신도 ${conf}%</div>
+        <div style="text-align:center;padding:20px 24px 12px;border-bottom:2px solid ${s.accent};">
+            <div style="font-size:18px;font-weight:800;color:#2D2D2D;">퍼스널 컬러 & 얼굴 인상 분석 리포트</div>
+        </div>
+
+        <!-- Type Info -->
+        <div style="padding:12px 24px;display:flex;gap:12px;">
+            <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px 12px;">
+                <div style="font-size:8px;color:#999;">한 줄 요약</div>
+                <div style="font-size:11px;font-weight:700;color:#2D2D2D;margin-top:2px;"><b>${shortUt}</b>. ${r.undertone_reason || ""}</div>
             </div>
-            <div class="rpt-header-main">
-                ${faceImg ? `<img src="${faceImg}" class="rpt-face">` : ""}
+            <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px 12px;">
+                <div style="font-size:8px;color:#999;">세부 타입</div>
+                <div style="font-size:14px;font-weight:800;color:${s.accent};margin-top:2px;">${detail}</div>
+                <div style="font-size:8px;color:#999;">${s.vibe}</div>
+            </div>
+        </div>
+
+        <!-- Visual Draping Comparison -->
+        <div style="padding:10px 24px;">
+            <div style="text-align:center;font-size:12px;font-weight:700;margin-bottom:10px;color:#2D2D2D;">비주얼 비교 영역</div>
+            <div style="display:flex;justify-content:center;gap:8px;">
+                <!-- Best 4 -->
                 <div>
-                    <div class="rpt-season">${s.emoji} ${detail}</div>
-                    <div class="rpt-season-en">${s.en}</div>
-                    ${r.one_line_conclusion ? `<div class="rpt-conclusion">${r.one_line_conclusion}</div>` : ""}
+                    <div style="text-align:center;font-size:9px;font-weight:700;color:#4CAF50;margin-bottom:6px;padding:3px 10px;background:#F0FFF0;border-radius:4px;border:1px solid #4CAF50;">잘 어울리는 컬러 (BEST 4)</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                        ${drapeFace(goodC, "BEST", "#4CAF50")}
+                    </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Face Analysis -->
-        <div class="rpt-section">
-            <div class="rpt-title">얼굴 인상 분석</div>
-            <div class="rpt-2col">
-                <div class="rpt-block"><strong>피부</strong> ${f.skin || ""}</div>
-                <div class="rpt-block"><strong>눈동자</strong> ${f.eyes || ""}</div>
-                <div class="rpt-block"><strong>머리카락</strong> ${f.hair || ""}</div>
-                <div class="rpt-block"><strong>대비감</strong> ${f.face_contrast || ""}</div>
-            </div>
-            <div class="rpt-2col">
-                <div class="rpt-good">
-                    <strong>강점</strong>
-                    ${(f.strengths || []).map(s => `<span>• ${s}</span>`).join("")}
+                <!-- Face Center -->
+                <div style="display:flex;align-items:center;">
+                    ${faceImg ? `<img src="${faceImg}" style="width:100px;height:120px;object-fit:cover;border-radius:12px;border:3px solid #E8E8E8;">` : ""}
                 </div>
-                <div class="rpt-bad">
-                    <strong>보완 포인트</strong>
-                    ${(f.improvements || []).map(s => `<span>• ${s}</span>`).join("")}
-                </div>
-            </div>
-        </div>
-
-        <!-- Draping -->
-        <div class="rpt-section">
-            <div class="rpt-title">컬러 드레이핑</div>
-            <div class="rpt-2col">
+                <!-- Worst 4 -->
                 <div>
-                    <div class="rpt-label" style="color:#4CAF50;">BEST</div>
-                    ${(d.good_colors || []).map(c => `<div class="rpt-color-row"><div style="width:24px;height:24px;min-width:24px;border-radius:6px;border:1px solid #ddd;background-color:${c.hex};"></div><span><b>${c.color}</b> ${c.effect}</span></div>`).join("")}
-                </div>
-                <div>
-                    <div class="rpt-label" style="color:#EF5350;">WORST</div>
-                    ${(d.bad_colors || []).map(c => `<div class="rpt-color-row"><div style="width:24px;height:24px;min-width:24px;border-radius:6px;border:1px solid #ddd;background-color:${c.hex};"></div><span><b>${c.color}</b> ${c.effect}</span></div>`).join("")}
+                    <div style="text-align:center;font-size:9px;font-weight:700;color:#EF5350;margin-bottom:6px;padding:3px 10px;background:#FFF0F0;border-radius:4px;border:1px solid #EF5350;">안 어울리는 컬러 (WORST 4)</div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+                        ${drapeFace(badC, "WORST", "#EF5350")}
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Best/Worst Colors -->
-        <div class="rpt-section">
-            <div class="rpt-title">추천 컬러</div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
-                ${best.map(c => `<div style="text-align:center;"><div style="width:40px;height:40px;border-radius:8px;border:1px solid #ddd;background-color:${c.hex};"></div><div style="font-size:9px;color:#6B6B6B;margin-top:3px;">${c.color}</div></div>`).join("")}
-            </div>
-            <div class="rpt-title" style="margin-top:0.8rem;">피해야 할 컬러</div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
-                ${worst.map(c => `<div style="text-align:center;"><div style="width:40px;height:40px;border-radius:8px;border:1px solid #ddd;background-color:${c.hex};"></div><div style="font-size:9px;color:#6B6B6B;margin-top:3px;">${c.color}</div></div>`).join("")}
+        <!-- Face Analysis + Strengths -->
+        <div style="padding:8px 24px;">
+            <div style="text-align:center;font-size:12px;font-weight:700;padding-bottom:4px;border-bottom:1px solid #ddd;margin-bottom:8px;">얼굴 분석</div>
+            <div style="display:flex;gap:10px;">
+                <!-- Face Details -->
+                <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px;font-size:8px;line-height:1.8;">
+                    <b>피부</b> · ${f.skin || ""}<br>
+                    <b>눈동자</b> · ${f.eyes || ""}<br>
+                    <b>머리색</b> · ${f.hair || ""}<br>
+                    <b>대비감</b> · ${f.face_contrast || ""}
+                </div>
+                <!-- Strengths -->
+                <div style="flex:1;">
+                    <div style="background:#F0FFF0;border-radius:8px;padding:8px;margin-bottom:4px;">
+                        <div style="font-size:8px;font-weight:700;color:#4CAF50;margin-bottom:3px;">장점 분석</div>
+                        ${(f.strengths || []).map(x => `<div style="font-size:7.5px;line-height:1.6;">• ${x}</div>`).join("")}
+                    </div>
+                    <div style="background:#FFF8F0;border-radius:8px;padding:8px;">
+                        <div style="font-size:8px;font-weight:700;color:#FF9800;margin-bottom:3px;">보완 포인트</div>
+                        ${(f.improvements || []).map(x => `<div style="font-size:7.5px;line-height:1.6;">• ${x}</div>`).join("")}
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Styling -->
-        <div class="rpt-section">
-            <div class="rpt-title">스타일링 제안</div>
-            <div class="rpt-3col">
-                <div class="rpt-block"><strong>립</strong> ${st.makeup_lip || ""}</div>
-                <div class="rpt-block"><strong>블러셔</strong> ${st.makeup_blush || ""}</div>
-                <div class="rpt-block"><strong>아이섀도</strong> ${st.makeup_eyeshadow || ""}</div>
-            </div>
-            <div class="rpt-2col" style="margin-top:0.5rem;">
-                <div class="rpt-block"><strong>추천 헤어</strong> ${st.hair_recommended || ""}</div>
-                <div class="rpt-block"><strong>패션 조합</strong> ${st.fashion_combinations || ""}</div>
+        <!-- Best/Worst Colors with large bars -->
+        <div style="padding:8px 24px;">
+            <div style="display:flex;gap:16px;">
+                <div style="flex:1;">
+                    <div style="font-size:10px;font-weight:700;color:#4CAF50;margin-bottom:6px;">[추천 컬러] BEST 5</div>
+                    ${colorBar(best, "BEST", "#4CAF50")}
+                </div>
+                <div style="flex:1;">
+                    <div style="font-size:10px;font-weight:700;color:#EF5350;margin-bottom:6px;">[피해야 할 컬러] WORST</div>
+                    ${colorBar(worst, "WORST", "#EF5350")}
+                </div>
             </div>
         </div>
 
-        <div class="rpt-footer">
+        <!-- Styling with color circles -->
+        <div style="padding:8px 24px;">
+            <div style="display:flex;gap:10px;">
+                <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px;">
+                    <div style="font-size:9px;font-weight:700;margin-bottom:4px;">메이크업</div>
+                    <div style="font-size:7.5px;line-height:1.7;">
+                        <b>립</b> ${st.makeup_lip || ""}<br>
+                        <b>블러셔</b> ${st.makeup_blush || ""}<br>
+                        <b>섀도우</b> ${st.makeup_eyeshadow || ""}
+                    </div>
+                </div>
+                <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px;">
+                    <div style="font-size:9px;font-weight:700;margin-bottom:4px;">헤어 & 패션</div>
+                    <div style="font-size:7.5px;line-height:1.7;">
+                        <b>추천 헤어</b> ${st.hair_recommended || ""}<br>
+                        <b>피해야 할 헤어</b> ${st.hair_avoid || ""}<br>
+                        <b>패션 조합</b> ${st.fashion_combinations || ""}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Conclusion -->
+        <div style="margin:8px 24px;padding:10px;background:${s.accent}15;border-radius:10px;border:1px solid ${s.accent}40;text-align:center;">
+            <div style="font-size:11px;font-weight:700;color:#2D2D2D;">${r.one_line_conclusion || ""}</div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;padding:8px 24px;font-size:7px;color:#ccc;border-top:1px solid #eee;margin-top:4px;">
             <span>Beauty AI Analyze</span>
-            <span>ai-beauty-analyze.streamlit.app</span>
+            <span>beauty-ai-analyze.onrender.com</span>
         </div>
     </div>`;
 
