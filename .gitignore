@@ -4,3 +4,12 @@ __pycache__/
 .DS_Store
 venv/
 .venv/
+
+# 레거시 (Streamlit 버전)
+app.py
+.streamlit/
+assets/
+components/
+
+# 블로그 글 (로컬 전용)
+blog_post.md
