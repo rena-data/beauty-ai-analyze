@@ -18,6 +18,7 @@ sys.path.insert(0, str(ROOT))
 load_dotenv(ROOT / ".env")
 
 from analyzer.color_analyzer import analyze_image
+from analyzer.fashion_matcher import match_fashion
 from utils.image_utils import resize_for_analysis
 
 app = FastAPI(title="Beauty AI Analyze API")
@@ -64,6 +65,31 @@ async def api_analyze(file: UploadFile = File(...)):
         if "503" in msg or "UNAVAILABLE" in msg:
             raise HTTPException(503, "AI 서버가 일시적으로 과부하 상태입니다. 잠시 후 다시 시도해주세요.")
         raise HTTPException(500, f"분석 중 오류가 발생했습니다: {msg}")
+
+
+@app.post("/api/fashion-match")
+async def api_fashion_match(file: UploadFile = File(...), season_type: str = "spring_warm"):
+    """옷 사진 업로드 → 퍼스널컬러 매칭 분석"""
+    if file.content_type not in ("image/jpeg", "image/png", "image/webp"):
+        raise HTTPException(400, "지원하지 않는 이미지 형식입니다.")
+
+    contents = await file.read()
+    if len(contents) > 10 * 1024 * 1024:
+        raise HTTPException(400, "파일 크기가 10MB를 초과합니다.")
+
+    image = Image.open(io.BytesIO(contents))
+    resized = resize_for_analysis(image)
+
+    try:
+        result = match_fashion(resized, season_type)
+        return result
+    except Exception as e:
+        msg = str(e)
+        if "429" in msg or "RESOURCE_EXHAUSTED" in msg:
+            raise HTTPException(429, "API 일일 사용량을 초과했습니다. 잠시 후 다시 시도해주세요.")
+        if "503" in msg or "UNAVAILABLE" in msg:
+            raise HTTPException(503, "AI 서버가 일시적으로 과부하 상태입니다. 잠시 후 다시 시도해주세요.")
+        raise HTTPException(500, f"매칭 분석 중 오류가 발생했습니다: {msg}")
 
 
 @app.get("/api/products/{season_type}")

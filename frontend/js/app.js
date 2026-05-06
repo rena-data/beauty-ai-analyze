@@ -371,6 +371,7 @@ function renderTab(tab) {
         case "beauty": renderProducts(el, r, "beauty"); break;
         case "fashion": renderProducts(el, r, "fashion"); break;
         case "detail": el.innerHTML = renderDetail(r); break;
+        case "fashion-match": el.innerHTML = renderFashionMatch(r); initFashionMatchUpload(); break;
     }
 }
 
@@ -690,6 +691,171 @@ function renderDetail(r) {
         <div class="analysis-block"><strong>분석 근거</strong>${r.analysis_reasoning || ""}</div>
         ${r.celebrity_reference ? `<div class="analysis-block" style="border-left-color:#FFD700"><strong>비슷한 퍼스널컬러의 연예인</strong>${r.celebrity_reference}</div>` : ""}
         ${r.special_notes ? `<div class="analysis-block" style="border-left-color:#C0C0C0"><strong>참고사항</strong>${r.special_notes}</div>` : ""}
+    </div>`;
+}
+
+// ── Fashion Match (2-1) ──
+function renderFashionMatch(r) {
+    const s = SM[r.season_type] || SM.spring_warm;
+    return `<div class="card">
+        <h3 class="section-title">옷 매칭 분석</h3>
+        <p class="section-sub">옷 사진을 업로드하면 내 퍼스널컬러(${s.emoji} ${r.season_detail || s.ko})와 얼마나 어울리는지 AI가 분석합니다.</p>
+
+        <div id="fashion-match-upload" style="border:2px dashed var(--border);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:border-color 0.3s;margin-bottom:1rem;">
+            <input type="file" id="fashion-file-input" accept="image/jpeg,image/png,image/webp" hidden>
+            <div id="fashion-upload-placeholder">
+                <div style="font-size:2rem;margin-bottom:0.5rem;">👗</div>
+                <p style="color:var(--text-sub);font-size:0.9rem;">옷 사진을 드래그하거나 클릭하여 업로드</p>
+                <span style="font-size:0.75rem;color:#aaa;">상의, 하의, 아우터, 원피스 등</span>
+            </div>
+            <img id="fashion-preview" class="hidden" style="max-height:200px;border-radius:8px;">
+        </div>
+
+        <button id="fashion-match-btn" class="btn-primary" disabled style="margin-bottom:1rem;">👗 매칭 분석 시작</button>
+
+        <div id="fashion-match-loading" class="hidden" style="text-align:center;padding:1rem;">
+            <div class="spinner"></div>
+            <p style="color:var(--text-sub);margin-top:0.5rem;font-size:0.85rem;">옷 색상 분석 중...</p>
+        </div>
+
+        <div id="fashion-match-result"></div>
+    </div>`;
+}
+
+function initFashionMatchUpload() {
+    const zone = $("#fashion-match-upload");
+    const input = $("#fashion-file-input");
+    const btn = $("#fashion-match-btn");
+    if (!zone || !input || !btn) return;
+
+    zone.addEventListener("click", () => input.click());
+    input.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            const img = $("#fashion-preview");
+            img.src = ev.target.result;
+            img.classList.remove("hidden");
+            $("#fashion-upload-placeholder").classList.add("hidden");
+            btn.disabled = false;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    zone.addEventListener("dragover", (e) => { e.preventDefault(); zone.style.borderColor = "var(--primary)"; });
+    zone.addEventListener("dragleave", () => { zone.style.borderColor = "var(--border)"; });
+    zone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        zone.style.borderColor = "var(--border)";
+        input.files = e.dataTransfer.files;
+        input.dispatchEvent(new Event("change"));
+    });
+
+    btn.addEventListener("click", runFashionMatch);
+}
+
+async function runFashionMatch() {
+    const input = $("#fashion-file-input");
+    const file = input.files[0];
+    if (!file) return;
+
+    const btn = $("#fashion-match-btn");
+    const loading = $("#fashion-match-loading");
+    const resultEl = $("#fashion-match-result");
+
+    btn.disabled = true;
+    btn.textContent = "분석 중...";
+    loading.classList.remove("hidden");
+    resultEl.innerHTML = "";
+
+    const form = new FormData();
+    form.append("file", file);
+    form.append("season_type", analysisResult.season_type);
+
+    try {
+        const resp = await fetch("/api/fashion-match", { method: "POST", body: form });
+        if (!resp.ok) {
+            const err = await resp.json();
+            throw new Error(err.detail || "매칭 분석 중 오류가 발생했습니다.");
+        }
+        const result = await resp.json();
+        gEvent("fashion_match", { season_type: analysisResult.season_type, grade: result.match_grade });
+        resultEl.innerHTML = renderFashionMatchResult(result);
+    } catch (e) {
+        resultEl.innerHTML = `<div class="error-msg">${e.message}</div>`;
+    } finally {
+        loading.classList.add("hidden");
+        btn.disabled = false;
+        btn.textContent = "👗 매칭 분석 시작";
+    }
+}
+
+function renderFashionMatchResult(result) {
+    const score = result.match_score || 0;
+    const grade = result.match_grade || "B";
+    const gradeColors = { S: "#4CAF50", A: "#2196F3", B: "#FF9800", C: "#EF5350" };
+    const gradeLabels = { S: "매우 잘 어울림", A: "잘 어울림", B: "보통", C: "안 어울림" };
+    const gc = gradeColors[grade] || "#999";
+
+    const dominantColors = (result.dominant_colors || []).map(c =>
+        `<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;">
+            <div style="width:28px;height:28px;border-radius:6px;background:${c.hex};border:1px solid #ddd;"></div>
+            <span style="font-size:0.85rem;font-weight:600;">${c.color}</span>
+            <span style="font-size:0.75rem;color:var(--text-sub);">${c.percentage}%</span>
+        </div>`).join("");
+
+    const seasonBars = Object.entries(result.season_match || {}).map(([key, pct]) => {
+        const ss = SM[key] || {};
+        const isTop = key === result.best_season;
+        return `<div style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.3rem;">
+            <span style="font-size:0.72rem;width:50px;color:${isTop ? ss.accent : 'var(--text-sub)'};font-weight:${isTop ? '700' : '400'};">${ss.emoji || ''} ${(ss.ko || '').slice(0,2)}</span>
+            <div style="flex:1;height:8px;background:#F0F0F0;border-radius:4px;overflow:hidden;">
+                <div style="width:${pct}%;height:100%;background:${ss.accent || '#ccc'};border-radius:4px;"></div>
+            </div>
+            <span style="font-size:0.72rem;width:30px;text-align:right;">${pct}%</span>
+        </div>`;
+    }).join("");
+
+    return `
+    <div style="border:2px solid ${gc};border-radius:12px;overflow:hidden;">
+        <!-- Grade Header -->
+        <div style="background:${gc};color:white;padding:0.8rem 1.2rem;display:flex;justify-content:space-between;align-items:center;">
+            <div>
+                <span style="font-size:1.5rem;font-weight:800;">${grade}</span>
+                <span style="font-size:0.9rem;margin-left:0.5rem;">${gradeLabels[grade] || ''}</span>
+            </div>
+            <div style="font-size:1.2rem;font-weight:700;">${score}점</div>
+        </div>
+
+        <div style="padding:1.2rem;">
+            <!-- Dominant Colors -->
+            <div style="margin-bottom:1rem;">
+                <p style="font-weight:700;font-size:0.85rem;margin-bottom:0.5rem;">감지된 색상</p>
+                ${dominantColors}
+            </div>
+
+            <!-- Season Match -->
+            <div style="margin-bottom:1rem;">
+                <p style="font-weight:700;font-size:0.85rem;margin-bottom:0.5rem;">시즌별 매칭률</p>
+                ${seasonBars}
+            </div>
+
+            <!-- Effect -->
+            <div class="analysis-block" style="border-left-color:${gc};margin-bottom:0.8rem;">
+                <strong>착용 시 예상 효과</strong>${result.effect_on_user || ""}
+            </div>
+
+            <!-- Styling Tip -->
+            <div class="analysis-block" style="border-left-color:var(--primary);">
+                <strong>코디 제안</strong>${result.styling_tip || ""}
+            </div>
+
+            <!-- Verdict -->
+            <div style="margin-top:0.8rem;padding:0.7rem;background:${gc}10;border-radius:8px;text-align:center;font-weight:700;font-size:0.9rem;color:${gc};">
+                ${result.verdict || ""}
+            </div>
+        </div>
     </div>`;
 }
 
