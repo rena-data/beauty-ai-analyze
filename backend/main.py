@@ -1,6 +1,7 @@
 """Beauty AI Analyze - FastAPI Backend"""
 
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -165,6 +166,31 @@ async def get_quiz(count: int = 5):
     for q in selected:
         q["options"] = ["spring_warm", "summer_cool", "autumn_warm", "winter_cool"]
     return {"questions": selected}
+
+
+@app.post("/api/contact")
+async def api_contact(data: dict):
+    """문의 접수 프록시 - Apps Script + Slack으로 전달 (시크릿 서버에서만 관리)"""
+    import httpx
+    sheet_url = os.getenv("CONTACT_SHEET_URL", "")
+    slack_url = os.getenv("CONTACT_SLACK_URL", "")
+
+    email = data.get("email", "")
+    msg_type = data.get("type", "")
+    content = data.get("content", "")
+    subject = data.get("subject", "")
+
+    try:
+        async with httpx.AsyncClient() as client:
+            if sheet_url:
+                await client.post(sheet_url, json={"email": email, "type": msg_type or subject, "content": content, "subject": subject}, timeout=10)
+            if slack_url:
+                text = f"📩 *문의 접수*\n*From:* {email}\n*유형:* {msg_type or subject}\n*내용:* {content}"
+                await client.post(slack_url, json={"text": text}, timeout=10)
+    except Exception:
+        pass
+
+    return {"ok": True}
 
 
 @app.get("/api/palettes/{season_type}")

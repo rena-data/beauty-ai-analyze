@@ -64,7 +64,7 @@ function initCookieBanner() {
 }
 
 // ─── Contact Modal ───
-const CONTACT_URL = "https://script.google.com/macros/s/AKfycbwor6iXS4G1aDSW6geAj8eMvLGRLs3l-IqoTeSidvq7WTFBZ7wYgM29g6wm2fSJVnRJ/exec";
+const CONTACT_URL = "/api/contact";
 
 function initContactModal() {
     const modal = $("#contact-modal");
@@ -124,7 +124,6 @@ async function submitContact() {
     try {
         await fetch(CONTACT_URL, {
             method: "POST",
-            mode: "no-cors",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, type, content }),
         });
