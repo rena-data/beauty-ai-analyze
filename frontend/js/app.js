@@ -213,6 +213,20 @@ async function runAnalysis() {
     $("#loading-section").classList.remove("hidden");
     $("#results-section").classList.add("hidden");
     hideError();
+
+    // 로딩 스텝 애니메이션
+    const steps = [$("#step-1"), $("#step-2"), $("#step-3"), $("#step-4")];
+    steps.forEach(s => { if(s) { s.className = "loading-step"; } });
+    if(steps[0]) steps[0].classList.add("active");
+    const stepTimer = setInterval(() => {
+        const cur = steps.findIndex(s => s && s.classList.contains("active"));
+        if (cur >= 0 && cur < steps.length - 1) {
+            steps[cur].classList.remove("active");
+            steps[cur].classList.add("done");
+            steps[cur + 1].classList.add("active");
+        }
+    }, 3000);
+
     const form = new FormData();
     form.append("file", selectedFile);
     try {
@@ -225,6 +239,7 @@ async function runAnalysis() {
         showError(e.message);
         $("#upload-section").classList.remove("hidden");
     } finally {
+        clearInterval(stepTimer);
         $("#loading-section").classList.add("hidden");
     }
 }
@@ -258,11 +273,19 @@ function hideError() { $("#error-msg").classList.add("hidden"); }
 
 // ─── Season helpers ───
 const SM = {
-    spring_warm: { emoji: "🌸", ko: "봄 웜톤", en: "Spring Warm", cls: "spring", accent: "#FF8FAB" },
-    summer_cool: { emoji: "🌊", ko: "여름 쿨톤", en: "Summer Cool", cls: "summer", accent: "#C8A2C8" },
-    autumn_warm: { emoji: "🍂", ko: "가을 웜톤", en: "Autumn Warm", cls: "autumn", accent: "#CD853F" },
-    winter_cool: { emoji: "❄️", ko: "겨울 쿨톤", en: "Winter Cool", cls: "winter", accent: "#DC143C" },
+    spring_warm: { emoji: "🌸", ko: "봄 웜톤", en: "Spring Warm", cls: "spring", accent: "#FF8FAB", vibe: "화사한 생기와 따뜻한 에너지" },
+    summer_cool: { emoji: "🌊", ko: "여름 쿨톤", en: "Summer Cool", cls: "summer", accent: "#C8A2C8", vibe: "부드러운 우아함과 차분한 세련미" },
+    autumn_warm: { emoji: "🍂", ko: "가을 웜톤", en: "Autumn Warm", cls: "autumn", accent: "#CD853F", vibe: "깊은 고급스러움과 풍요로운 무드" },
+    winter_cool: { emoji: "❄️", ko: "겨울 쿨톤", en: "Winter Cool", cls: "winter", accent: "#DC143C", vibe: "강렬한 카리스마와 시크한 존재감" },
 };
+
+// ─── Grade helper ───
+function getGrade(conf) {
+    if (conf >= 80) return { grade: "S", label: "매우 높음", color: "#4CAF50" };
+    if (conf >= 65) return { grade: "A", label: "높음", color: "#2196F3" };
+    if (conf >= 50) return { grade: "B", label: "보통", color: "#FF9800" };
+    return { grade: "C", label: "낮음", color: "#EF5350" };
+}
 function fmt(n) { return n.toLocaleString("ko-KR"); }
 
 // ─── Render Results ───
@@ -279,21 +302,51 @@ function renderResults() {
         ? `<img src="${uploadedImageDataUrl}" class="result-face-img" alt="분석 사진">`
         : "";
 
+    const g = getGrade(conf);
+    const rates = r.season_rates || {};
+
+    // 4계절 매칭률 차트 (프롬프트에서 반환 시)
+    const seasons = [
+        { key: "spring_warm", ...SM.spring_warm },
+        { key: "summer_cool", ...SM.summer_cool },
+        { key: "autumn_warm", ...SM.autumn_warm },
+        { key: "winter_cool", ...SM.winter_cool },
+    ];
+    const hasRates = Object.keys(rates).length > 0;
+    const rateChart = hasRates ? `
+        <div style="margin-top:1rem;">
+            <div style="font-size:0.85rem;font-weight:600;margin-bottom:0.5rem;">4계절 매칭률</div>
+            ${seasons.map(ss => {
+                const pct = rates[ss.key] || 0;
+                const isTop = ss.key === r.season_type;
+                return `<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;">
+                    <span style="font-size:0.75rem;width:60px;color:${isTop ? ss.accent : 'var(--text-sub)'};font-weight:${isTop ? '700' : '400'};">${ss.emoji} ${ss.ko.slice(0,2)}</span>
+                    <div style="flex:1;height:8px;background:#F0F0F0;border-radius:4px;overflow:hidden;">
+                        <div style="width:${pct}%;height:100%;background:${ss.accent};border-radius:4px;transition:width 0.8s;"></div>
+                    </div>
+                    <span style="font-size:0.75rem;width:32px;text-align:right;color:${isTop ? ss.accent : 'var(--text-sub)'};font-weight:${isTop ? '700' : '400'};">${pct}%</span>
+                </div>`;
+            }).join("")}
+        </div>` : "";
+
     $("#result-header").innerHTML = `
         <div class="result-header-with-face">
             ${faceImg}
             <div class="result-header-info">
                 <div class="result-header-inner">
                     <span class="season-badge season-${s.cls}">${s.emoji} ${detail}</span>
-                    <span style="color:var(--text-sub);font-size:0.85rem;">${s.en}</span>
+                    <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:${g.color};color:white;font-weight:800;font-size:0.8rem;margin-left:0.5rem;" title="분석 등급: ${g.label}">${g.grade}</span>
+                    <span style="color:var(--text-sub);font-size:0.85rem;margin-left:0.3rem;">${s.en}</span>
                 </div>
-                <div style="margin-top:1rem;">
+                <div style="font-size:0.85rem;color:${s.accent};margin-top:0.4rem;font-style:italic;">${s.vibe}</div>
+                <div style="margin-top:0.8rem;">
                     <div style="display:flex;justify-content:space-between;font-size:0.85rem;">
                         <span style="font-weight:600;">분석 확신도</span>
-                        <span style="color:var(--text-sub);">${conf}%</span>
+                        <span style="color:var(--text-sub);">${conf}% (${g.label})</span>
                     </div>
                     <div class="conf-bar"><div class="conf-fill ${confCls}" style="width:${conf}%"></div></div>
                 </div>
+                ${rateChart}
                 ${conclusion ? `<div class="conclusion-box"><strong>한 줄 결론</strong> ${conclusion}</div>` : ""}
             </div>
         </div>`;
@@ -379,7 +432,7 @@ async function renderPalette(el, r) {
         const resp = await fetch(`/api/palettes/${r.season_type}`);
         const data = await resp.json();
         const s = SM[r.season_type];
-        const sw = (arr) => (arr || []).map((c) => `<div class="swatch"><div class="swatch-color" style="background:${c.hex}" title="${c.name}"></div><div class="swatch-name">${c.name}</div></div>`).join("");
+        const sw = (arr) => (arr || []).map((c) => `<div class="swatch"><div class="swatch-tooltip">${c.name} (${c.hex})</div><div class="swatch-color" style="background:${c.hex}"></div><div class="swatch-name">${c.name}</div></div>`).join("");
         el.innerHTML = `<div class="card">
             <h3 class="section-title">${s.emoji} ${data.name || s.ko} 컬러 팔레트</h3>
             <p style="font-weight:700;color:var(--green);margin-bottom:0.8rem;">Best Colors</p>

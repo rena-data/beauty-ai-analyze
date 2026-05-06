@@ -107,6 +107,12 @@ ANALYSIS_PROMPT = """이 사진의 인물에 대해 퍼스널컬러 + 얼굴 인
   "season_type": "spring_warm | summer_cool | autumn_warm | winter_cool",
   "season_detail": "세부 타입 (예: 봄 웜 라이트, 가을 웜 딥, 여름 쿨 소프트, 겨울 쿨 클리어)",
   "confidence": 0.0~1.0 (위의 확신도 기준을 엄격히 적용),
+  "season_rates": {
+    "spring_warm": 0~100 (봄 웜톤 매칭률 %),
+    "summer_cool": 0~100 (여름 쿨톤 매칭률 %),
+    "autumn_warm": 0~100 (가을 웜톤 매칭률 %),
+    "winter_cool": 0~100 (겨울 쿨톤 매칭률 %)
+  },
   "undertone": "웜톤 또는 쿨톤 (상세 설명 포함)",
   "undertone_reason": "언더톤 판정의 핵심 근거 1문장",
   "contrast_level": "고대비 | 중대비 | 저대비",
