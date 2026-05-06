@@ -537,11 +537,11 @@ async function downloadReport() {
             <div class="rpt-2col">
                 <div>
                     <div class="rpt-label" style="color:#4CAF50;">BEST</div>
-                    ${(d.good_colors || []).map(c => `<div class="rpt-color-row"><span class="rpt-chip" style="background:${c.hex}"></span><span><b>${c.color}</b> ${c.effect}</span></div>`).join("")}
+                    ${(d.good_colors || []).map(c => `<div class="rpt-color-row"><div style="width:24px;height:24px;min-width:24px;border-radius:6px;border:1px solid #ddd;background-color:${c.hex};"></div><span><b>${c.color}</b> ${c.effect}</span></div>`).join("")}
                 </div>
                 <div>
                     <div class="rpt-label" style="color:#EF5350;">WORST</div>
-                    ${(d.bad_colors || []).map(c => `<div class="rpt-color-row"><span class="rpt-chip" style="background:${c.hex}"></span><span><b>${c.color}</b> ${c.effect}</span></div>`).join("")}
+                    ${(d.bad_colors || []).map(c => `<div class="rpt-color-row"><div style="width:24px;height:24px;min-width:24px;border-radius:6px;border:1px solid #ddd;background-color:${c.hex};"></div><span><b>${c.color}</b> ${c.effect}</span></div>`).join("")}
                 </div>
             </div>
         </div>
@@ -549,12 +549,12 @@ async function downloadReport() {
         <!-- Best/Worst Colors -->
         <div class="rpt-section">
             <div class="rpt-title">추천 컬러</div>
-            <div class="rpt-colors-row">
-                ${best.map(c => `<div class="rpt-swatch"><span class="rpt-chip-lg" style="background:${c.hex}"></span><span class="rpt-swatch-name">${c.color}</span></div>`).join("")}
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+                ${best.map(c => `<div style="text-align:center;"><div style="width:40px;height:40px;border-radius:8px;border:1px solid #ddd;background-color:${c.hex};"></div><div style="font-size:9px;color:#6B6B6B;margin-top:3px;">${c.color}</div></div>`).join("")}
             </div>
             <div class="rpt-title" style="margin-top:0.8rem;">피해야 할 컬러</div>
-            <div class="rpt-colors-row">
-                ${worst.map(c => `<div class="rpt-swatch"><span class="rpt-chip-lg" style="background:${c.hex}"></span><span class="rpt-swatch-name">${c.color}</span></div>`).join("")}
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+                ${worst.map(c => `<div style="text-align:center;"><div style="width:40px;height:40px;border-radius:8px;border:1px solid #ddd;background-color:${c.hex};"></div><div style="font-size:9px;color:#6B6B6B;margin-top:3px;">${c.color}</div></div>`).join("")}
             </div>
         </div>
 
