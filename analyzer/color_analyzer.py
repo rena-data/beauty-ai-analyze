@@ -9,10 +9,10 @@ from google import genai
 from google.genai import types
 from PIL import Image
 
-from .prompts import ANALYSIS_PROMPT, ANALYSIS_SYSTEM_PROMPT, NO_FACE_PROMPT
+from .prompts import ANALYSIS_PROMPT, ANALYSIS_SYSTEM_PROMPT
 
 MAX_RETRIES = 3
-RETRY_DELAYS = [2, 5, 10]  # 초
+RETRY_DELAYS = [2, 5, 10]
 
 
 def _get_client():
@@ -54,27 +54,8 @@ def _call_with_retry(fn):
     raise last_err
 
 
-def check_face(image: Image.Image) -> dict:
-    """이미지에 얼굴이 있는지 확인"""
-    client = _get_client()
-    img_part = _image_to_part(image)
-
-    def _call():
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=[NO_FACE_PROMPT, img_part],
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                temperature=0.3,
-            ),
-        )
-        return _parse_json_response(response.text)
-
-    return _call_with_retry(_call)
-
-
 def analyze_image(image: Image.Image) -> dict:
-    """이미지에서 퍼스널컬러를 분석하여 결과 반환"""
+    """이미지에서 퍼스널컬러를 분석하여 결과 반환 (얼굴 확인 포함)"""
     client = _get_client()
     img_part = _image_to_part(image)
 
@@ -91,6 +72,10 @@ def analyze_image(image: Image.Image) -> dict:
         return _parse_json_response(response.text)
 
     result = _call_with_retry(_call)
+
+    # 얼굴 없음 감지 (프롬프트에서 반환)
+    if result.get("no_face"):
+        raise ValueError(result.get("no_face_reason", "사진에서 얼굴을 인식하지 못했습니다."))
 
     # 필수 필드 검증
     required_fields = [

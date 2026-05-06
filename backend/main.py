@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 load_dotenv(ROOT / ".env")
 
-from analyzer.color_analyzer import analyze_image, check_face
+from analyzer.color_analyzer import analyze_image
 from utils.image_utils import resize_for_analysis
 
 app = FastAPI(title="Beauty AI Analyze API")
@@ -53,15 +53,6 @@ async def api_analyze(file: UploadFile = File(...)):
     resized = resize_for_analysis(image)
 
     try:
-        # Step 1: face check
-        face_result = check_face(resized)
-        if not face_result.get("has_face", False):
-            raise HTTPException(
-                422,
-                detail=face_result.get("reason", "사진에서 얼굴을 인식하지 못했습니다."),
-            )
-
-        # Step 2: full analysis
         result = analyze_image(resized)
         return result
     except HTTPException:
