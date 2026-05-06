@@ -101,7 +101,7 @@ def match_fashion(image: Image.Image, season_type: str) -> dict:
                     contents=[prompt, img_part],
                     config=types.GenerateContentConfig(
                         response_mime_type="application/json",
-                        temperature=0.3,
+                        temperature=0.0,
                     ),
                 )
                 result = _parse_json_response(response.text)

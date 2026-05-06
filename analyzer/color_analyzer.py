@@ -75,7 +75,7 @@ def _call_api(model: str, img_part, system: str, prompt: str) -> dict:
         config=types.GenerateContentConfig(
             system_instruction=system,
             response_mime_type="application/json",
-            temperature=0.3,
+            temperature=0.0,
         ),
     )
     return _parse_json_response(response.text)
