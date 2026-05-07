@@ -485,21 +485,51 @@ footer {
 .footer-links span { color: #ddd; }
 .footer-note { font-size: 0.72rem; margin-top: 0.3rem; }
 
-/* ── Share Dropdown ── */
-.share-dropdown {
-    position: absolute; bottom: calc(100% + 8px); left: 50%;
-    transform: translateX(-50%);
-    background: white; border: 1px solid var(--border);
-    border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    padding: 0.4rem; min-width: 160px; z-index: 100;
+/* ── Share Modal ── */
+.share-modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
 }
-.share-item {
-    display: block; width: 100%; padding: 0.55rem 0.8rem;
-    border: none; background: none; text-align: left;
-    font-family: inherit; font-size: 0.85rem; cursor: pointer;
-    border-radius: 8px; transition: background 0.2s;
+.share-modal {
+    background: white; border-radius: 16px; padding: 1.8rem;
+    max-width: 420px; width: 90%; max-height: 85vh; overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2); position: relative;
 }
-.share-item:hover { background: var(--bg); }
+.share-modal-close {
+    position: absolute; top: 12px; right: 16px;
+    border: none; background: none; font-size: 1.5rem;
+    cursor: pointer; color: #999; line-height: 1;
+}
+.share-modal-close:hover { color: #333; }
+.share-modal h3 {
+    font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; text-align: center;
+}
+.share-preview-wrap {
+    width: 100%; max-height: 260px; overflow: hidden;
+    border-radius: 10px; border: 1px solid var(--border);
+    margin-bottom: 1.2rem; position: relative;
+}
+.share-preview-wrap::after {
+    content: ""; position: absolute; bottom: 0; left: 0; right: 0; height: 50px;
+    background: linear-gradient(transparent, white); pointer-events: none;
+}
+.share-preview {
+    width: 140%; margin-left: -20%; display: block;
+}
+.share-buttons {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.6rem;
+}
+.share-btn-item {
+    display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+    padding: 0.7rem 0.3rem; border: 1px solid var(--border); border-radius: 12px;
+    background: white; cursor: pointer; font-family: inherit;
+    font-size: 0.68rem; color: #555; transition: all 0.2s;
+}
+.share-btn-item:hover { background: var(--bg); border-color: var(--accent-color); transform: translateY(-2px); }
+.share-btn-item .share-icon { font-size: 1.5rem; line-height: 1; }
+.share-btn-item img.share-icon { width: 28px; height: 28px; }
 
 /* ── Cookie Banner ── */
 .cookie-banner {

@@ -15,6 +15,7 @@
     <meta name="twitter:title" content="퍼스널컬러 무료 진단 | AI가 찾아주는 내 인생 컬러">
     <meta name="twitter:description" content="사진 한 장으로 AI 퍼스널컬러 무료 진단 + 맞춤 뷰티/패션 추천">
     <link rel="canonical" href="https://beauty-ai-analyze.onrender.com">
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
@@ -186,12 +187,40 @@
             <!-- Download Report -->
             <div class="center-action" style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
                 <button id="download-report-btn" class="btn-primary" style="width:auto;">전체 리포트 다운로드 (이미지)</button>
-                <div id="share-wrap" style="display:none;position:relative;">
+                <div id="share-wrap" style="display:none;">
                     <button id="share-btn" class="btn-secondary">공유하기</button>
-                    <div id="share-dropdown" class="share-dropdown hidden">
-                        <button class="share-item" data-type="x">X (트위터)</button>
-                        <button class="share-item" data-type="facebook">Facebook</button>
-                        <button class="share-item" data-type="copy">URL 복사</button>
+                </div>
+
+                <!-- Share Modal -->
+                <div id="share-modal" class="hidden">
+                    <div class="share-modal-overlay" id="share-modal-overlay">
+                        <div class="share-modal">
+                            <button class="share-modal-close" id="share-modal-close">&times;</button>
+                            <h3>결과 공유하기</h3>
+                            <div class="share-preview-wrap"><img id="share-preview-img" class="share-preview" src="" alt="리포트 미리보기"></div>
+                            <div class="share-buttons">
+                                <button class="share-btn-item" data-type="kakao">
+                                    <img src="https://cdn.simpleicons.org/kakaotalk/FFCD00" class="share-icon" alt="카카오톡">
+                                    <span>카카오톡</span>
+                                </button>
+                                <button class="share-btn-item" data-type="threads">
+                                    <img src="https://cdn.simpleicons.org/threads/000000" class="share-icon" alt="Threads">
+                                    <span>Threads</span>
+                                </button>
+                                <button class="share-btn-item" data-type="x">
+                                    <img src="https://cdn.simpleicons.org/x/FFFFFF" class="share-icon" style="background:#000;border-radius:6px;padding:3px;" alt="X">
+                                    <span>X</span>
+                                </button>
+                                <button class="share-btn-item" data-type="facebook">
+                                    <img src="https://cdn.simpleicons.org/facebook/1877F2" class="share-icon" alt="Facebook">
+                                    <span>Facebook</span>
+                                </button>
+                                <button class="share-btn-item" data-type="copy">
+                                    <span class="share-icon">🔗</span>
+                                    <span>URL 복사</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <button id="reset-btn" class="btn-secondary">다른 사진으로 다시 분석하기</button>

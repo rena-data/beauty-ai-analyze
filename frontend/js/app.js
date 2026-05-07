@@ -4,6 +4,7 @@
 let analysisResult = null;
 let selectedFile = null;
 let uploadedImageDataUrl = null;
+let reportImageUrl = null;  // Supabase에 업로드된 리포트 이미지 URL
 
 // ─── DOM ───
 const $ = (sel) => document.querySelector(sel);
@@ -25,15 +26,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (analyzeBtn) analyzeBtn.addEventListener("click", runAnalysis);
     if (resetBtn) resetBtn.addEventListener("click", resetAll);
     if (dlBtn) dlBtn.addEventListener("click", downloadReport);
-    if (shareBtn) shareBtn.addEventListener("click", toggleShareDropdown);
-    document.addEventListener("click", (e) => {
-        const dd = $("#share-dropdown");
-        const wrap = $("#share-wrap");
-        if (dd && wrap && !wrap.contains(e.target)) dd.classList.add("hidden");
+    if (shareBtn) shareBtn.addEventListener("click", openShareModal);
+    const shareModalClose = $("#share-modal-close");
+    const shareModalOverlay = $("#share-modal-overlay");
+    if (shareModalClose) shareModalClose.addEventListener("click", closeShareModal);
+    if (shareModalOverlay) shareModalOverlay.addEventListener("click", (e) => {
+        if (e.target === shareModalOverlay) closeShareModal();
     });
-    document.querySelectorAll(".share-item").forEach(btn => {
+    document.querySelectorAll(".share-btn-item").forEach(btn => {
         btn.addEventListener("click", () => handleShare(btn.dataset.type));
     });
+
+    // Kakao SDK 초기화
+    try { initKakao(); } catch(e) { console.error("initKakao:", e); }
 
     // 공유 URL로 접속한 경우 결과 로드
     checkSharedUrl();
@@ -190,16 +195,65 @@ function trackClick(brand, name, category) {
     }).catch(() => {});
 }
 
+// ─── Kakao SDK ───
+function initKakao() {
+    if (window.Kakao && !Kakao.isInitialized()) {
+        Kakao.init("6f04a6ce997fd97378cdb1b3fc4508f6");
+    }
+}
+
 // ─── Share URL ───
 function getShareUrl() {
     if (!analysisResult || !analysisResult.share_id) return null;
     return `${location.origin}?share=${analysisResult.share_id}`;
 }
 
-// ─── Share ───
-function toggleShareDropdown() {
-    const dd = $("#share-dropdown");
-    if (dd) dd.classList.toggle("hidden");
+// ─── Report Image Upload (background) ───
+async function uploadReportInBackground() {
+    try {
+        const canvas = await generateReportCanvas();
+        if (!canvas) return;
+        const dataUrl = canvas.toDataURL("image/png");
+        const resp = await fetch("/api/upload-report-image", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                analysis_id: analysisResult.share_id,
+                image_data: dataUrl
+            })
+        });
+        const data = await resp.json();
+        if (data.ok && data.image_url) {
+            reportImageUrl = data.image_url;
+        }
+    } catch(e) {
+        console.error("report upload:", e);
+    }
+}
+
+// ─── Share Modal ───
+async function openShareModal() {
+    const modal = $("#share-modal");
+    if (!modal) return;
+    modal.classList.remove("hidden");
+
+    // 리포트 미리보기 생성
+    const previewImg = $("#share-preview-img");
+    if (previewImg && analysisResult) {
+        previewImg.src = "";
+        previewImg.alt = "리포트 생성 중...";
+        try {
+            const canvas = await generateReportCanvas();
+            if (canvas) previewImg.src = canvas.toDataURL("image/png");
+        } catch(e) {
+            previewImg.alt = "미리보기를 생성할 수 없습니다.";
+        }
+    }
+}
+
+function closeShareModal() {
+    const modal = $("#share-modal");
+    if (modal) modal.classList.add("hidden");
 }
 
 function handleShare(type) {
@@ -212,11 +266,35 @@ function handleShare(type) {
     const text = `${title} AI 퍼스널컬러 무료 진단 받아보세요!`;
 
     switch (type) {
+        case "kakao":
+            if (window.Kakao && Kakao.isInitialized()) {
+                const desc = r.one_line_conclusion || "AI 퍼스널컬러 무료 진단 받아보세요!";
+                const kakaoImg = reportImageUrl || "https://beauty-ai-analyze.onrender.com/static/img/og-kakao.png";
+                Kakao.Share.sendDefault({
+                    objectType: "feed",
+                    content: {
+                        title: title,
+                        description: desc,
+                        imageUrl: kakaoImg,
+                        link: { webUrl: url, mobileWebUrl: url }
+                    },
+                    buttons: [{
+                        title: "결과 보기",
+                        link: { webUrl: url, mobileWebUrl: url }
+                    }]
+                });
+            } else {
+                alert("카카오톡 공유를 준비 중입니다. 잠시 후 다시 시도해주세요.");
+            }
+            break;
         case "x":
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
             break;
         case "facebook":
             window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`, "_blank");
+            break;
+        case "threads":
+            window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(text + "\n" + url)}`, "_blank");
             break;
         case "copy":
             navigator.clipboard.writeText(url).then(() => {
@@ -227,7 +305,7 @@ function handleShare(type) {
             break;
     }
 
-    $("#share-dropdown").classList.add("hidden");
+    closeShareModal();
     gEvent("share", { type, season_type: r.season_type });
 }
 
@@ -344,7 +422,7 @@ function initTabs() {
 
 // ─── Reset ───
 function resetAll() {
-    analysisResult = null; selectedFile = null; uploadedImageDataUrl = null;
+    analysisResult = null; selectedFile = null; uploadedImageDataUrl = null; reportImageUrl = null;
     $("#file-input").value = "";
     $("#preview-img").classList.add("hidden");
     $("#preview-img").src = "";
@@ -443,6 +521,12 @@ function renderResults() {
     // 공유 버튼 표시
     const shareWrap = $("#share-wrap");
     if (shareWrap && analysisResult.share_id) shareWrap.style.display = "inline-block";
+
+    // 리포트 이미지 백그라운드 업로드 (공유용)
+    if (analysisResult.share_id && !reportImageUrl) {
+        uploadReportInBackground();
+    }
+
     $$(".tab").forEach((t) => t.classList.remove("active"));
     $$(".tab")[0].classList.add("active");
     renderTab("draping");
@@ -1034,13 +1118,11 @@ function renderLoadingQuizQuestion(el) {
     });
 }
 
-// ─── Full Report Download ───
-async function downloadReport() {
-    const btn = $("#download-report-btn");
-    btn.disabled = true;
-    btn.textContent = "리포트 생성 중...";
-
+// ─── Report Canvas (shared by download & share preview) ───
+async function generateReportCanvas() {
     const r = analysisResult;
+    if (!r) return null;
+
     const s = SM[r.season_type] || SM.spring_warm;
     const conf = Math.round((r.confidence || 0) * 100);
     const f = r.face_analysis || {};
@@ -1050,14 +1132,11 @@ async function downloadReport() {
     const worst = r.worst_colors || [];
     const detail = r.season_detail || s.ko;
     const faceImg = uploadedImageDataUrl || "";
-
-    // Build one-page report HTML
     const goodC = d.good_colors || [];
     const badC = d.bad_colors || [];
     const ut = r.undertone || "";
     const shortUt = ut.includes("(") ? ut.split("(")[0].trim() : ut;
 
-    // 얼굴+컬러 배경 드레이핑 카드 생성
     const drapeFace = (colors, label, borderColor) => colors.slice(0, 4).map(c => `
         <div style="text-align:center;">
             <div style="width:90px;height:110px;background:${c.hex};border-radius:10px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border:2px solid ${borderColor};">
@@ -1067,7 +1146,6 @@ async function downloadReport() {
             <div style="font-size:7.5px;color:#6B6B6B;line-height:1.3;max-width:90px;margin-top:2px;">${c.effect}</div>
         </div>`).join("");
 
-    // 큰 컬러바 + 설명
     const colorBar = (colors, label, labelColor) => colors.map(c => `
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
             <div style="width:80px;height:22px;border-radius:6px;background:${c.hex};border:1px solid #e0e0e0;flex-shrink:0;"></div>
@@ -1076,14 +1154,26 @@ async function downloadReport() {
 
     const report = $("#full-report");
     report.classList.remove("hidden");
-    report.innerHTML = `
+    report.innerHTML = buildReportHTML(r, s, conf, f, d, st, best, worst, detail, faceImg, goodC, badC, ut, shortUt, drapeFace, colorBar);
+
+    try {
+        await new Promise(res => setTimeout(res, 300));
+        const canvas = await html2canvas(document.getElementById("report-capture"), {
+            scale: 2, useCORS: true, allowTaint: true,
+            backgroundColor: "#FFFFFF", width: 800, windowWidth: 800,
+        });
+        return canvas;
+    } finally {
+        report.classList.add("hidden");
+    }
+}
+
+function buildReportHTML(r, s, conf, f, d, st, best, worst, detail, faceImg, goodC, badC, ut, shortUt, drapeFace, colorBar) {
+    return `
     <div class="report-page" id="report-capture">
-        <!-- Header -->
         <div style="text-align:center;padding:20px 24px 12px;border-bottom:2px solid ${s.accent};">
             <div style="font-size:18px;font-weight:800;color:#2D2D2D;">퍼스널 컬러 & 얼굴 인상 분석 리포트</div>
         </div>
-
-        <!-- Type Info -->
         <div style="padding:12px 24px;display:flex;gap:12px;">
             <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px 12px;">
                 <div style="font-size:8px;color:#999;">한 줄 요약</div>
@@ -1095,44 +1185,28 @@ async function downloadReport() {
                 <div style="font-size:8px;color:#999;">${s.vibe}</div>
             </div>
         </div>
-
-        <!-- Visual Draping Comparison -->
         <div style="padding:10px 24px;">
             <div style="text-align:center;font-size:12px;font-weight:700;margin-bottom:10px;color:#2D2D2D;">비주얼 비교 영역</div>
             <div style="display:flex;justify-content:center;gap:8px;">
-                <!-- Best 4 -->
                 <div>
                     <div style="text-align:center;font-size:9px;font-weight:700;color:#4CAF50;margin-bottom:6px;padding:3px 10px;background:#F0FFF0;border-radius:4px;border:1px solid #4CAF50;">잘 어울리는 컬러 (BEST 4)</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-                        ${drapeFace(goodC, "BEST", "#4CAF50")}
-                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">${drapeFace(goodC, "BEST", "#4CAF50")}</div>
                 </div>
-                <!-- Face Center -->
                 <div style="display:flex;align-items:center;">
                     ${faceImg ? `<img src="${faceImg}" style="width:100px;height:120px;object-fit:cover;border-radius:12px;border:3px solid #E8E8E8;">` : ""}
                 </div>
-                <!-- Worst 4 -->
                 <div>
                     <div style="text-align:center;font-size:9px;font-weight:700;color:#EF5350;margin-bottom:6px;padding:3px 10px;background:#FFF0F0;border-radius:4px;border:1px solid #EF5350;">안 어울리는 컬러 (WORST 4)</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
-                        ${drapeFace(badC, "WORST", "#EF5350")}
-                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">${drapeFace(badC, "WORST", "#EF5350")}</div>
                 </div>
             </div>
         </div>
-
-        <!-- Face Analysis + Strengths -->
         <div style="padding:8px 24px;">
             <div style="text-align:center;font-size:12px;font-weight:700;padding-bottom:4px;border-bottom:1px solid #ddd;margin-bottom:8px;">얼굴 분석</div>
             <div style="display:flex;gap:10px;">
-                <!-- Face Details -->
                 <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px;font-size:8px;line-height:1.8;">
-                    <b>피부</b> · ${f.skin || ""}<br>
-                    <b>눈동자</b> · ${f.eyes || ""}<br>
-                    <b>머리색</b> · ${f.hair || ""}<br>
-                    <b>대비감</b> · ${f.face_contrast || ""}
+                    <b>피부</b> · ${f.skin || ""}<br><b>눈동자</b> · ${f.eyes || ""}<br><b>머리색</b> · ${f.hair || ""}<br><b>대비감</b> · ${f.face_contrast || ""}
                 </div>
-                <!-- Strengths -->
                 <div style="flex:1;">
                     <div style="background:#F0FFF0;border-radius:8px;padding:8px;margin-bottom:4px;">
                         <div style="font-size:8px;font-weight:700;color:#4CAF50;margin-bottom:3px;">장점 분석</div>
@@ -1145,74 +1219,52 @@ async function downloadReport() {
                 </div>
             </div>
         </div>
-
-        <!-- Best/Worst Colors with large bars -->
         <div style="padding:8px 24px;">
             <div style="display:flex;gap:16px;">
-                <div style="flex:1;">
-                    <div style="font-size:10px;font-weight:700;color:#4CAF50;margin-bottom:6px;">[추천 컬러] BEST 5</div>
-                    ${colorBar(best, "BEST", "#4CAF50")}
-                </div>
-                <div style="flex:1;">
-                    <div style="font-size:10px;font-weight:700;color:#EF5350;margin-bottom:6px;">[피해야 할 컬러] WORST</div>
-                    ${colorBar(worst, "WORST", "#EF5350")}
-                </div>
+                <div style="flex:1;"><div style="font-size:10px;font-weight:700;color:#4CAF50;margin-bottom:6px;">[추천 컬러] BEST 5</div>${colorBar(best, "BEST", "#4CAF50")}</div>
+                <div style="flex:1;"><div style="font-size:10px;font-weight:700;color:#EF5350;margin-bottom:6px;">[피해야 할 컬러] WORST</div>${colorBar(worst, "WORST", "#EF5350")}</div>
             </div>
         </div>
-
-        <!-- Styling with color circles -->
         <div style="padding:8px 24px;">
             <div style="display:flex;gap:10px;">
                 <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px;">
                     <div style="font-size:9px;font-weight:700;margin-bottom:4px;">메이크업</div>
-                    <div style="font-size:7.5px;line-height:1.7;">
-                        <b>립</b> ${st.makeup_lip || ""}<br>
-                        <b>블러셔</b> ${st.makeup_blush || ""}<br>
-                        <b>섀도우</b> ${st.makeup_eyeshadow || ""}
-                    </div>
+                    <div style="font-size:7.5px;line-height:1.7;"><b>립</b> ${st.makeup_lip || ""}<br><b>블러셔</b> ${st.makeup_blush || ""}<br><b>섀도우</b> ${st.makeup_eyeshadow || ""}</div>
                 </div>
                 <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px;">
                     <div style="font-size:9px;font-weight:700;margin-bottom:4px;">헤어 & 패션</div>
-                    <div style="font-size:7.5px;line-height:1.7;">
-                        <b>추천 헤어</b> ${st.hair_recommended || ""}<br>
-                        <b>피해야 할 헤어</b> ${st.hair_avoid || ""}<br>
-                        <b>패션 조합</b> ${st.fashion_combinations || ""}
-                    </div>
+                    <div style="font-size:7.5px;line-height:1.7;"><b>추천 헤어</b> ${st.hair_recommended || ""}<br><b>피해야 할 헤어</b> ${st.hair_avoid || ""}<br><b>패션 조합</b> ${st.fashion_combinations || ""}</div>
                 </div>
             </div>
         </div>
-
-        <!-- Conclusion -->
         <div style="margin:8px 24px;padding:10px;background:${s.accent}15;border-radius:10px;border:1px solid ${s.accent}40;text-align:center;">
             <div style="font-size:11px;font-weight:700;color:#2D2D2D;">${r.one_line_conclusion || ""}</div>
         </div>
-
         <div style="display:flex;justify-content:space-between;padding:8px 24px;font-size:7px;color:#ccc;border-top:1px solid #eee;margin-top:4px;">
             <span>Beauty AI Analyze</span>
             <span>beauty-ai-analyze.onrender.com</span>
         </div>
     </div>`;
+}
 
-    // Capture with html2canvas
+// ─── Full Report Download ───
+async function downloadReport() {
+    const btn = $("#download-report-btn");
+    btn.disabled = true;
+    btn.textContent = "리포트 생성 중...";
+
     try {
-        await new Promise(r => setTimeout(r, 300)); // wait for images
-        const canvas = await html2canvas(document.getElementById("report-capture"), {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: "#FFFFFF",
-            width: 800,
-            windowWidth: 800,
-        });
-        const link = document.createElement("a");
-        link.download = "personal_color_report.png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-        gEvent("report_download", { season_type: r.season_type });
+        const canvas = await generateReportCanvas();
+        if (canvas) {
+            const link = document.createElement("a");
+            link.download = "personal_color_report.png";
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            gEvent("report_download", { season_type: analysisResult.season_type });
+        }
     } catch (e) {
         alert("리포트 생성 중 오류가 발생했습니다: " + e.message);
     } finally {
-        report.classList.add("hidden");
         btn.disabled = false;
         btn.textContent = "전체 리포트 다운로드 (이미지)";
     }

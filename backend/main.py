@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from PIL import Image
 import io
 
@@ -21,7 +21,8 @@ load_dotenv(ROOT / ".env")
 from analyzer.color_analyzer import analyze_image
 from analyzer.fashion_matcher import match_fashion
 from utils.image_utils import resize_for_analysis
-from utils.supabase_client import save_analysis, get_analysis, track_product_click
+from utils.supabase_client import save_analysis, get_analysis, track_product_click, upload_report_image, get_report_image_url
+import base64
 
 app = FastAPI(title="Beauty AI Analyze API")
 
@@ -38,8 +39,38 @@ app.mount("/static", StaticFiles(directory=str(FRONTEND)), name="static")
 
 
 @app.get("/")
-async def index():
-    return FileResponse(str(FRONTEND / "index.html"))
+async def index(share: str = ""):
+    if not share:
+        return FileResponse(str(FRONTEND / "index.html"))
+
+    # 공유 URL → 동적 OG 메타태그 삽입
+    analysis = get_analysis(share)
+    if not analysis:
+        return FileResponse(str(FRONTEND / "index.html"))
+
+    season_detail = analysis.get("season_detail", "퍼스널컬러")
+    conclusion = analysis.get("one_line_conclusion", "AI 퍼스널컬러 무료 진단 받아보세요!")
+    image_url = analysis.get("report_image_url", "")
+    share_url = f"https://beauty-ai-analyze.onrender.com/?share={share}"
+
+    # 원본 HTML 읽어서 OG 태그 동적 삽입
+    html = (FRONTEND / "index.html").read_text(encoding="utf-8")
+    og_tags = f"""
+    <meta property="og:title" content="나의 퍼스널컬러는 {season_detail}!">
+    <meta property="og:description" content="{conclusion}">
+    <meta property="og:url" content="{share_url}">
+    <meta name="twitter:title" content="나의 퍼스널컬러는 {season_detail}!">
+    <meta name="twitter:description" content="{conclusion}">"""
+    if image_url:
+        og_tags += f"""
+    <meta property="og:image" content="{image_url}">
+    <meta property="og:image:width" content="800">
+    <meta property="og:image:height" content="1200">
+    <meta name="twitter:image" content="{image_url}">
+    <meta name="twitter:card" content="summary_large_image">"""
+
+    html = html.replace("</head>", og_tags + "\n</head>", 1)
+    return HTMLResponse(html)
 
 
 @app.post("/api/analyze")
@@ -105,6 +136,26 @@ async def get_shared_analysis(analysis_id: str):
     if not result:
         raise HTTPException(404, "분석 결과를 찾을 수 없습니다.")
     return result
+
+
+@app.post("/api/upload-report-image")
+async def api_upload_report_image(data: dict):
+    """클라이언트에서 생성한 리포트 이미지를 Supabase Storage에 업로드"""
+    analysis_id = data.get("analysis_id", "")
+    image_data = data.get("image_data", "")  # base64 data URL
+    if not analysis_id or not image_data:
+        raise HTTPException(400, "analysis_id와 image_data가 필요합니다.")
+
+    # data:image/png;base64,xxxx → bytes
+    try:
+        if "," in image_data:
+            image_data = image_data.split(",", 1)[1]
+        image_bytes = base64.b64decode(image_data)
+    except Exception:
+        raise HTTPException(400, "이미지 데이터가 올바르지 않습니다.")
+
+    url = upload_report_image(analysis_id, image_bytes)
+    return {"ok": bool(url), "image_url": url or ""}
 
 
 @app.post("/api/track-click")

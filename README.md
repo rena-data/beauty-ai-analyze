@@ -19,8 +19,8 @@ AI 기반 퍼스널컬러 분석 & 맞춤 뷰티/패션 추천 웹 서비스
 - **맞춤 제품 추천**: 성별별(남성/여성/유니섹스) 뷰티(올리브영) + 패션(무신사) 실제 제품
 - **스타일링 제안**: 메이크업 포인트 카드(베이스/아이섀도/치크/립) + 추천 컬러 팔레트 3행(베이직/포인트/액센트)
 - **패션 매칭**: 옷 사진 업로드 → 내 퍼스널컬러와 궁합 분석 (S/A/B/C 등급)
-- **원페이지 리포트 다운로드**: 얼굴+컬러 드레이핑 비교 포함 리포트 이미지 저장
-- **SNS 공유**: X(트위터), Facebook, URL 복사
+- **원페이지 리포트 다운로드**: 얼굴+컬러 드레이핑 비교 포함 리포트 이미지 저장 + Supabase Storage 자동 업로드
+- **SNS 공유**: 카카오톡(실제 리포트 이미지 포함), Threads, X, Facebook, URL 복사 — 공유 모달 + 리포트 미리보기
 - **로딩 중 퀴즈**: 분석 대기 중 연예인 퍼스널컬러 퀴즈 3문제
 - **프로필 입력**: 성별, 키, 몸무게, 골격 체형(스트레이트/웨이브/내추럴), 스타일
 
@@ -33,7 +33,7 @@ AI 기반 퍼스널컬러 분석 & 맞춤 뷰티/패션 추천 웹 서비스
 | **Frontend** | HTML5, CSS3, Vanilla JavaScript |
 | **Backend** | Python, FastAPI, Uvicorn |
 | **AI 분석** | Google Gemini Vision API (모델 폴백 체인 4개) |
-| **DB** | Supabase (PostgreSQL) - 분석 통계, 클릭 추적, 결과 공유 |
+| **DB/Storage** | Supabase (PostgreSQL + Storage) - 분석 통계, 클릭 추적, 결과 공유, 리포트 이미지 저장 |
 | **데이터** | JSON (제품 카탈로그 6파일 + 퀴즈) |
 | **배포** | Render (Web Service) |
 | **모니터링** | UptimeRobot (슬립 방지) |
@@ -52,7 +52,8 @@ beauty_ai_analyze/
 ├── frontend/
 │   ├── index.html                # 메인 SPA
 │   ├── css/style.css             # 프리미엄 클린 테마
-│   └── js/app.js                 # 앱 로직 (업로드, 분석, 탭, 리포트, 퀴즈, 공유)
+│   ├── js/app.js                 # 앱 로직 (업로드, 분석, 탭, 리포트, 퀴즈, 공유)
+│   └── img/og-kakao.png          # 카카오톡 공유 기본 OG 이미지
 ├── analyzer/
 │   ├── color_analyzer.py         # Gemini Vision API 연동 (모델 폴백 체인 + 키 이중화)
 │   ├── fashion_matcher.py        # 패션 매칭 분석 (옷 사진 → 궁합)
@@ -69,7 +70,7 @@ beauty_ai_analyze/
 │   └── quiz_data.json            # 연예인 퍼스널컬러 퀴즈 (15명)
 ├── utils/
 │   ├── image_utils.py            # 이미지 리사이즈/검증
-│   └── supabase_client.py        # Supabase 연동 (통계/클릭/공유)
+│   └── supabase_client.py        # Supabase 연동 (통계/클릭/공유/리포트 이미지 업로드)
 ├── requirements.txt
 ├── render.yaml                   # Render 배포 설정
 ├── supabase_schema.sql           # Supabase 테이블 스키마
@@ -84,6 +85,7 @@ beauty_ai_analyze/
 # 1. 환경변수 설정
 cp .env.example .env
 # .env 파일에 GOOGLE_API_KEY, SUPABASE_URL, SUPABASE_KEY 입력
+# 카카오톡 공유: Kakao Developers에서 JavaScript 키 발급 후 app.js의 Kakao.init()에 설정
 
 # 2. 의존성 설치
 pip install -r requirements.txt
@@ -151,3 +153,4 @@ open http://localhost:8000
 |------|------|
 | 2026.05.06 | MVP 출시 - 퍼스널컬러 분석, 얼굴 인상 분석, 컬러 드레이핑, 리포트 다운로드 / 실제 제품 데이터 (올리브영 80개 + 무신사 37개, 성별별) / GA4, 개인정보처리방침, 쿠키 동의, 문의하기(Google Sheets) / Render 배포 + UptimeRobot / 프롬프트 정확도 개선 / API 호출 최적화 |
 | 2026.05.06 | 모델 폴백 체인 + API 키 이중화 / 웹 UI 고도화 (4계절 비교 카드, 레이더 차트, 메이크업 포인트 카드, 컬러 팔레트 3행) / 패션 매칭 (옷 사진 → S/A/B/C) / 로딩 퀴즈 (연예인 3문제) / Supabase 연동 (통계, 클릭 추적, 공유 URL) / SNS 공유 (X, Facebook, URL 복사) / SEO + Google Search Console |
+| 2026.05.07 | 공유 기능 전면 개편 — 드롭다운→모달(리포트 미리보기+5개 SNS 버튼), 카카오톡 SDK 연동(실제 리포트 이미지 공유), Threads 공유, 동적 OG 메타태그(공유 URL별 제목/이미지), 리포트 이미지 Supabase Storage 자동 업로드, generateReportCanvas 함수 분리 리팩토링 |

@@ -58,6 +58,41 @@ def get_analysis(analysis_id: str) -> dict | None:
     return None
 
 
+def upload_report_image(analysis_id: str, image_bytes: bytes) -> str | None:
+    """리포트 이미지를 Supabase Storage에 업로드, 공개 URL 반환"""
+    client = get_client()
+    if not client:
+        return None
+    try:
+        path = f"reports/{analysis_id}.png"
+        client.storage.from_("report-images").upload(
+            path, image_bytes,
+            file_options={"content-type": "image/png", "upsert": "true"}
+        )
+        res = client.storage.from_("report-images").get_public_url(path)
+        # analyses 테이블에 이미지 URL 저장
+        client.table("analyses").update(
+            {"report_image_url": res}
+        ).eq("id", analysis_id).execute()
+        return res
+    except Exception:
+        return None
+
+
+def get_report_image_url(analysis_id: str) -> str | None:
+    """분석 ID로 리포트 이미지 URL 조회"""
+    client = get_client()
+    if not client:
+        return None
+    try:
+        resp = client.table("analyses").select("report_image_url").eq("id", analysis_id).execute()
+        if resp.data and resp.data[0].get("report_image_url"):
+            return resp.data[0]["report_image_url"]
+    except Exception:
+        pass
+    return None
+
+
 def track_product_click(season_type: str, gender: str, brand: str, name: str, category: str = ""):
     """제품 클릭 추적"""
     client = get_client()
