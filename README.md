@@ -36,7 +36,7 @@ AI 기반 퍼스널컬러 분석 & 맞춤 뷰티/패션 추천 웹 서비스
 | **DB/Storage** | Supabase (PostgreSQL + Storage) - 분석 통계, 클릭 추적, 결과 공유, 리포트 이미지 저장 |
 | **데이터** | JSON (제품 카탈로그 6파일 + 퀴즈) |
 | **배포** | Render (Web Service) |
-| **모니터링** | UptimeRobot (슬립 방지) |
+| **모니터링** | UptimeRobot (슬립 방지), cron-job.org (리포트 이미지 30일 자동 삭제) |
 | **분석** | Google Analytics 4 |
 | **문의 시스템** | Google Sheets + Apps Script |
 | **폰트** | Pretendard Variable |
@@ -117,6 +117,7 @@ open http://localhost:8000
 
 - 업로드된 사진은 서버에 저장되지 않으며, 분석 완료 후 즉시 삭제
 - 프로필 정보는 세션 종료 시 삭제 (별도 저장 없음)
+- 리포트 이미지는 사용자가 "공유하기"를 클릭한 경우에만 업로드되며, 30일 후 자동 삭제
 - GA4 데이터 수집은 쿠키 동의 시에만 활성화
 - 상세 내용은 서비스 내 개인정보처리방침 참조
 
@@ -130,6 +131,7 @@ open http://localhost:8000
 | Render 호스팅 (무료) | $0 |
 | Supabase (무료) | $0 |
 | UptimeRobot (무료) | $0 |
+| cron-job.org (무료) | $0 |
 | Google Analytics 4 | $0 |
 | Google Sheets (문의) | $0 |
 | **총 운영 비용** | **$0/월** |
@@ -153,4 +155,4 @@ open http://localhost:8000
 |------|------|
 | 2026.05.06 | MVP 출시 - 퍼스널컬러 분석, 얼굴 인상 분석, 컬러 드레이핑, 리포트 다운로드 / 실제 제품 데이터 (올리브영 80개 + 무신사 37개, 성별별) / GA4, 개인정보처리방침, 쿠키 동의, 문의하기(Google Sheets) / Render 배포 + UptimeRobot / 프롬프트 정확도 개선 / API 호출 최적화 |
 | 2026.05.06 | 모델 폴백 체인 + API 키 이중화 / 웹 UI 고도화 (4계절 비교 카드, 레이더 차트, 메이크업 포인트 카드, 컬러 팔레트 3행) / 패션 매칭 (옷 사진 → S/A/B/C) / 로딩 퀴즈 (연예인 3문제) / Supabase 연동 (통계, 클릭 추적, 공유 URL) / SNS 공유 (X, Facebook, URL 복사) / SEO + Google Search Console |
-| 2026.05.07 | 공유 기능 전면 개편 — 드롭다운→모달(리포트 미리보기+5개 SNS 버튼), 카카오톡 SDK 연동(실제 리포트 이미지 공유), Threads 공유, 동적 OG 메타태그(공유 URL별 제목/이미지), 리포트 이미지 Supabase Storage 자동 업로드, generateReportCanvas 함수 분리 리팩토링 |
+| 2026.05.07 | 공유 기능 전면 개편 — 드롭다운→모달(리포트 미리보기+5개 SNS 버튼), 카카오톡 SDK 연동(실제 리포트 이미지 공유), Threads 공유, 동적 OG 메타태그(공유 URL별 제목/이미지), 리포트 이미지 Supabase Storage 업로드(공유 클릭 시에만), 30일 자동 삭제(cron-job.org), generateReportCanvas 함수 분리 리팩토링 |
