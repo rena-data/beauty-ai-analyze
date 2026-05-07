@@ -209,11 +209,9 @@ function getShareUrl() {
 }
 
 // ─── Report Image Upload (background) ───
-async function uploadReportInBackground() {
+async function uploadReportInBackground(dataUrl) {
     try {
-        const canvas = await generateReportCanvas();
-        if (!canvas) return;
-        const dataUrl = canvas.toDataURL("image/png");
+        if (!dataUrl) return;
         const resp = await fetch("/api/upload-report-image", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -237,14 +235,21 @@ async function openShareModal() {
     if (!modal) return;
     modal.classList.remove("hidden");
 
-    // 리포트 미리보기 생성
     const previewImg = $("#share-preview-img");
     if (previewImg && analysisResult) {
         previewImg.src = "";
         previewImg.alt = "리포트 생성 중...";
         try {
             const canvas = await generateReportCanvas();
-            if (canvas) previewImg.src = canvas.toDataURL("image/png");
+            if (canvas) {
+                const dataUrl = canvas.toDataURL("image/png");
+                previewImg.src = dataUrl;
+
+                // 공유 클릭 시에만 Supabase Storage 업로드 (1회만)
+                if (analysisResult.share_id && !reportImageUrl) {
+                    uploadReportInBackground(dataUrl);
+                }
+            }
         } catch(e) {
             previewImg.alt = "미리보기를 생성할 수 없습니다.";
         }
@@ -521,11 +526,6 @@ function renderResults() {
     // 공유 버튼 표시
     const shareWrap = $("#share-wrap");
     if (shareWrap && analysisResult.share_id) shareWrap.style.display = "inline-block";
-
-    // 리포트 이미지 백그라운드 업로드 (공유용)
-    if (analysisResult.share_id && !reportImageUrl) {
-        uploadReportInBackground();
-    }
 
     $$(".tab").forEach((t) => t.classList.remove("active"));
     $$(".tab")[0].classList.add("active");
