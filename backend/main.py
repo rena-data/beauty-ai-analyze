@@ -21,7 +21,7 @@ load_dotenv(ROOT / ".env")
 from analyzer.color_analyzer import analyze_image
 from analyzer.fashion_matcher import match_fashion
 from utils.image_utils import resize_for_analysis
-from utils.supabase_client import save_analysis, get_analysis, track_product_click, upload_report_image, get_report_image_url
+from utils.supabase_client import save_analysis, get_analysis, track_product_click, upload_report_image, get_report_image_url, cleanup_old_report_images
 import base64
 
 app = FastAPI(title="Beauty AI Analyze API")
@@ -255,3 +255,13 @@ async def get_palette(season_type: str):
     if not palette:
         raise HTTPException(400, f"잘못된 시즌 타입: {season_type}")
     return palette
+
+
+@app.get("/api/cleanup-reports")
+async def api_cleanup_reports(days: int = 30, key: str = ""):
+    """30일 이상 지난 리포트 이미지 정리 (외부 cron 호출용)"""
+    secret = os.getenv("CLEANUP_SECRET", "")
+    if not secret or key != secret:
+        raise HTTPException(403, "Unauthorized")
+    deleted = cleanup_old_report_images(days)
+    return {"deleted": deleted}

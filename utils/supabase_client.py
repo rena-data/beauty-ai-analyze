@@ -93,6 +93,37 @@ def get_report_image_url(analysis_id: str) -> str | None:
     return None
 
 
+def cleanup_old_report_images(days: int = 30) -> int:
+    """N일 이상 지난 리포트 이미지를 Storage에서 삭제하고 URL을 null로 초기화"""
+    client = get_client()
+    if not client:
+        return 0
+    try:
+        from datetime import datetime, timedelta
+        cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        resp = client.table("analyses").select("id, report_image_url").lt(
+            "created_at", cutoff
+        ).not_.is_("report_image_url", "null").execute()
+
+        if not resp.data:
+            return 0
+
+        deleted = 0
+        for row in resp.data:
+            path = f"reports/{row['id']}.png"
+            try:
+                client.storage.from_("report-images").remove([path])
+            except Exception:
+                pass
+            client.table("analyses").update(
+                {"report_image_url": None}
+            ).eq("id", row["id"]).execute()
+            deleted += 1
+        return deleted
+    except Exception:
+        return 0
+
+
 def track_product_click(season_type: str, gender: str, brand: str, name: str, category: str = ""):
     """제품 클릭 추적"""
     client = get_client()
