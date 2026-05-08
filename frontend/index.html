@@ -324,8 +324,9 @@
                 <button class="modal-close" id="close-contact">&times;</button>
             </div>
             <div class="modal-body">
+                <p style="font-size:0.85rem;color:#6B6B6B;margin-bottom:1.2rem;line-height:1.5;">분석 결과, 서비스 이용, 오류 신고 등 무엇이든 편하게 남겨주세요.</p>
                 <div class="form-group" style="margin-bottom:1rem;">
-                    <label>이메일 <span style="color:#EF5350;">*</span></label>
+                    <label>이메일 (선택)</label>
                     <div style="display:flex;gap:0.4rem;align-items:center;">
                         <input type="text" id="contact-email-id" placeholder="아이디" style="flex:1;padding:0.6rem 0.8rem;border:1px solid #E8E8E8;border-radius:10px;font-size:0.9rem;font-family:inherit;">
                         <span style="color:#6B6B6B;font-size:0.9rem;">@</span>
@@ -341,7 +342,7 @@
                             <option value="outlook.com">outlook.com</option>
                             <option value="custom">직접 입력</option>
                         </select>
-                        <input type="text" id="contact-email-custom" placeholder="도메인 입력" class="hidden" style="flex:1;padding:0.6rem 0.8rem;border:1px solid #E8E8E8;border-radius:10px;font-size:0.9rem;font-family:inherit;">
+                        <input type="text" id="contact-email-custom" placeholder="도메인 입력" style="flex:1;padding:0.6rem 0.8rem;border:1px solid #E8E8E8;border-radius:10px;font-size:0.9rem;font-family:inherit;display:none;">
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom:1rem;">
@@ -360,8 +361,9 @@
                     <label>내용 <span style="color:#EF5350;">*</span></label>
                     <textarea id="contact-content" rows="5" placeholder="문의 내용을 입력해주세요." style="width:100%;padding:0.6rem 0.8rem;border:1px solid #E8E8E8;border-radius:10px;font-size:0.9rem;font-family:inherit;resize:vertical;"></textarea>
                 </div>
-                <button id="contact-submit" class="btn-primary">문의 접수하기</button>
+                <button id="contact-submit" class="btn-primary">문의 보내기</button>
                 <p id="contact-status" style="text-align:center;margin-top:0.8rem;font-size:0.85rem;" class="hidden"></p>
+                <p style="font-size:0.72rem;color:#999;text-align:center;margin-top:0.6rem;line-height:1.4;">문의 내용은 운영자에게 전달되며, 이메일을 남기시면 회신드려요.</p>
             </div>
         </div>
     </div>

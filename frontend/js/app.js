@@ -87,15 +87,23 @@ function initContactModal() {
 
     const domainSel = $("#contact-email-domain");
     const customInput = $("#contact-email-custom");
-    if (domainSel) domainSel.addEventListener("change", () => {
-        if (domainSel.value === "custom") {
-            customInput.classList.remove("hidden");
-            customInput.focus();
-        } else {
-            customInput.classList.add("hidden");
-            customInput.value = "";
-        }
-    });
+    if (domainSel && customInput) {
+        domainSel.addEventListener("change", () => {
+            if (domainSel.value === "custom") {
+                domainSel.style.display = "none";
+                customInput.style.display = "block";
+                customInput.value = "";
+                customInput.focus();
+            }
+        });
+        customInput.addEventListener("blur", () => {
+            if (!customInput.value.trim()) {
+                customInput.style.display = "none";
+                domainSel.style.display = "block";
+                domainSel.value = "";
+            }
+        });
+    }
 }
 
 function closeContactModal() {
@@ -115,8 +123,8 @@ async function submitContact() {
     const status = $("#contact-status");
     const btn = $("#contact-submit");
 
-    if (!emailId || !domain || !type || !content) {
-        status.textContent = "모든 항목을 입력해주세요.";
+    if (!content) {
+        status.textContent = "문의 내용을 입력해주세요.";
         status.style.color = "#EF5350";
         status.classList.remove("hidden");
         return;
@@ -139,8 +147,9 @@ async function submitContact() {
 
         $("#contact-email-id").value = "";
         $("#contact-email-domain").value = "";
+        $("#contact-email-domain").style.display = "block";
         $("#contact-email-custom").value = "";
-        $("#contact-email-custom").classList.add("hidden");
+        $("#contact-email-custom").style.display = "none";
         $("#contact-type").value = "";
         $("#contact-content").value = "";
 
