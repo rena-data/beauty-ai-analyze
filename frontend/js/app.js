@@ -189,19 +189,36 @@ function hexToChip(text) {
 }
 
 // ─── Product Click Tracking (Supabase + GA4) ───
-function trackClick(brand, name, category) {
-    gEvent("product_click", { brand, product: name });
+function trackClick(brand, name, category, price) {
     const r = analysisResult;
+    const season = r?.season_type || "";
+    gEvent("product_click", {
+        brand, product: name, category,
+        price: price || 0,
+        season_type: season,
+        gender: (document.getElementById("prof-gender") || {}).value || "",
+    });
     if (!r) return;
     fetch("/api/track-click", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            season_type: r.season_type,
+            season_type: season,
             gender: (document.getElementById("prof-gender") || {}).value || "",
             brand, name, category,
         }),
     }).catch(() => {});
+}
+
+function appendUtm(url, season) {
+    if (!url) return "";
+    try {
+        const u = new URL(url);
+        u.searchParams.set("utm_source", "beautyai");
+        u.searchParams.set("utm_medium", "referral");
+        u.searchParams.set("utm_campaign", season || "general");
+        return u.toString();
+    } catch { return url; }
 }
 
 // ─── Kakao SDK ───
@@ -847,7 +864,9 @@ function productCard(item, type) {
         : `<div class="product-img-overlay"><span class="brand-text">${brand}</span><span class="product-text">${item.name.length > 20 ? item.name.slice(0,20)+"..." : item.name}</span></div>`;
 
     const dot = type === "fashion" && item.color_hex ? `<span class="fashion-color" style="background:${item.color_hex}"></span>` : "";
-    const buyBtn = buyUrl ? `<a href="${buyUrl}" target="_blank" rel="noopener" class="buy-link" onclick="trackClick('${brand}','${item.name.replace(/'/g,"")}','${item.category||""}')">구매하기 →</a>` : "";
+    const season = analysisResult?.season_type || "";
+    const utmUrl = appendUtm(buyUrl, season);
+    const buyBtn = utmUrl ? `<a href="${utmUrl}" target="_blank" rel="noopener" class="buy-link" onclick="trackClick('${brand}','${item.name.replace(/'/g,"")}','${item.category||""}',${item.price||0})">구매하기 →</a>` : "";
 
     return `<div class="product-card">
         <div class="product-img" style="background:linear-gradient(135deg,${colorHex}22,${colorHex}11);">${imgInner}</div>
