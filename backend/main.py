@@ -38,6 +38,12 @@ FRONTEND = ROOT / "frontend"
 app.mount("/static", StaticFiles(directory=str(FRONTEND)), name="static")
 
 
+@app.head("/")
+async def head_index():
+    """UptimeRobot 등 헬스체크용 HEAD 요청 허용"""
+    return HTMLResponse("")
+
+
 @app.get("/")
 async def index(share: str = ""):
     if not share:

@@ -170,9 +170,10 @@ ANALYSIS_PROMPT = """이 사진의 인물에 대해 퍼스널컬러 + 얼굴 인
   },
 
   "color_palette": {
-    "basic": [{"color": "컬러명", "hex": "#XXXXXX"}, ...] (베이직 컬러 4-5개),
-    "point": [{"color": "컬러명", "hex": "#XXXXXX"}, ...] (포인트 컬러 4-5개),
-    "accent": [{"color": "컬러명", "hex": "#XXXXXX"}, ...] (액센트 컬러 4-5개)
+    "base": [{"color": "컬러명", "hex": "#XXXXXX"}, ...] (베이스 컬러 5개: 아이보리, 베이지 등 일상 기본색),
+    "main": [{"color": "컬러명", "hex": "#XXXXXX"}, ...] (메인 컬러 5개: 가장 잘 어울리는 핵심 컬러),
+    "point": [{"color": "컬러명", "hex": "#XXXXXX"}, ...] (포인트 컬러 5개: 악세사리/포인트에 쓸 선명한 컬러),
+    "neutral": [{"color": "컬러명", "hex": "#XXXXXX"}, ...] (뉴트럴 컬러 5개: 무채색/브라운 계열 기본 컬러)
   },
 
   "styling": {
