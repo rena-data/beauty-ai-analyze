@@ -476,6 +476,18 @@ const SM = {
     winter_cool: { emoji: "❄️", ko: "겨울 쿨톤", en: "Winter Cool", cls: "winter", accent: "#DC143C", vibe: "강렬한 카리스마와 시크한 존재감" },
 };
 
+// 8서브타입 드레이핑 정의 (리포트용)
+const SUBTYPES = [
+    { season: "spring_warm", num: "01", name: "밝고 화사한", bg: "#F0A08A", chips: ["#F5EDDA","#E8836B","#F5C396","#E8B44C","#7CB86C"] },
+    { season: "spring_warm", num: "02", name: "생기 있는", bg: "#E8B44C", chips: ["#4CB8A8","#D86050","#E89048","#60B860","#D0A030"] },
+    { season: "summer_cool", num: "03", name: "부드럽고 청순한", bg: "#B098C0", chips: ["#F0E4E8","#C088A0","#9888B0","#7898B8","#B890A4"] },
+    { season: "summer_cool", num: "04", name: "차분하고 우아한", bg: "#7898B8", chips: ["#B85878","#7080B8","#8870A8","#68A8A0","#885088"] },
+    { season: "autumn_warm", num: "05", name: "깊이 있는", bg: "#B86848", chips: ["#E0CCA8","#B86848","#A85838","#B89830","#A04030"] },
+    { season: "autumn_warm", num: "06", name: "내추럴한", bg: "#787840", chips: ["#287060","#783040","#386828","#C87030","#288078"] },
+    { season: "winter_cool", num: "07", name: "선명하고 시크한", bg: "#C01828", chips: ["#FFFFFF","#C01828","#1838A0","#007848","#3C1878"] },
+    { season: "winter_cool", num: "08", name: "또렷하고 강렬한", bg: "#1A1A1A", chips: ["#D02868","#0060C0","#A01060","#007080","#008848"] },
+];
+
 // ─── Grade helper ───
 function getGrade(conf) {
     if (conf >= 80) return { grade: "S", label: "매우 높음", color: "#4CAF50" };
@@ -1279,21 +1291,80 @@ async function generateReportCanvas() {
 }
 
 function buildReportHTML(r, s, conf, f, d, st, best, worst, detail, faceImg, goodC, badC, ut, shortUt, drapeFace, colorBar, diamondImg, cp) {
-    // palette chips for report
-    const rptPaletteRow = (label, arr) => {
-        if (!arr?.length) return "";
-        return `<div style="display:flex;align-items:center;margin-bottom:5px;">
-            <span style="font-size:7.5px;font-weight:700;width:52px;flex-shrink:0;color:#888;">${label}</span>
-            <div style="display:flex;gap:3px;">
-                ${arr.map(c => `<div style="text-align:center;">
-                    <div style="width:24px;height:24px;border-radius:50%;background:${c.hex || c.color};border:1.5px solid #e8e8e8;"></div>
+    const rates = r.season_rates || {};
+    const eyeC = r.eyeshadow_colors || {};
+    const lipC = r.lip_colors || {};
+    const hasPalette = cp && (cp.base || cp.main || cp.point || cp.neutral);
+
+    // 별점 헬퍼
+    const getStars = (rate) => {
+        if (rate >= 80) return "★★★★★";
+        if (rate >= 65) return "★★★★☆";
+        if (rate >= 50) return "★★★☆☆";
+        if (rate >= 35) return "★★☆☆☆";
+        return "★☆☆☆☆";
+    };
+    const getMatchLabel = (rate, isBest) => {
+        if (isBest) return `<span style="background:${s.accent};color:white;padding:1px 6px;border-radius:3px;font-size:7px;font-weight:800;">BEST MATCH</span>`;
+        if (rate >= 65) return "잘 어울림";
+        if (rate >= 45) return "보통";
+        return "어색함";
+    };
+
+    // 8서브타입 드레이핑
+    const seasons = ["spring_warm","summer_cool","autumn_warm","winter_cool"];
+    const seasonLabels = {"spring_warm":"봄 웜 (Spring Warm)","summer_cool":"여름 쿨 (Summer Cool)","autumn_warm":"가을 웜 (Autumn Warm)","winter_cool":"겨울 쿨 (Winter Cool)"};
+    const bestSeason = r.season_type;
+
+    const drapeSection = seasons.map(sk => {
+        const subs = SUBTYPES.filter(t => t.season === sk);
+        const rate = rates[sk] || 0;
+        const isBest = sk === bestSeason;
+        const headerBg = isBest ? `${SM[sk].accent}18` : "#F8F8F8";
+        const headerBorder = isBest ? `2px solid ${SM[sk].accent}` : "1px solid #e0e0e0";
+        return `<div style="flex:1;min-width:0;">
+            <div style="text-align:center;font-size:8px;font-weight:700;padding:4px 2px;background:${headerBg};border:${headerBorder};border-radius:6px 6px 0 0;color:#2D2D2D;">${seasonLabels[sk]}</div>
+            <div style="display:flex;gap:4px;padding:4px;border:1px solid #e8e8e8;border-top:none;border-radius:0 0 6px 6px;">
+                ${subs.map(sub => `<div style="flex:1;text-align:center;">
+                    <div style="width:100%;aspect-ratio:3/4;background:${sub.bg};border-radius:6px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;margin-bottom:3px;">
+                        ${faceImg ? `<img src="${faceImg}" style="width:85%;aspect-ratio:1;object-fit:cover;border-radius:50%;margin-bottom:4px;border:2px solid rgba(255,255,255,0.7);">` : ""}
+                    </div>
+                    <div style="font-size:7px;font-weight:700;color:#2D2D2D;">${sub.num} ${sub.name}</div>
+                    <div style="font-size:8px;color:#D4A020;letter-spacing:-1px;">${getStars(rate)}</div>
+                    <div style="font-size:7px;color:#666;margin-top:1px;">${getMatchLabel(rate, isBest && sub.num === subs[0].num)}</div>
+                    <div style="display:flex;gap:2px;justify-content:center;margin-top:3px;">
+                        ${sub.chips.map(c => `<div style="width:12px;height:12px;border-radius:50%;background:${c};border:1px solid #ddd;"></div>`).join("")}
+                    </div>
                 </div>`).join("")}
             </div>
         </div>`;
-    };
-    const hasPalette = cp && (cp.base || cp.main || cp.point || cp.neutral);
+    }).join("");
 
-    // makeup points numbered
+    // 아이섀도 컬러칩
+    const eyeChip = (arr, borderColor) => (arr || []).slice(0, 5).map(c => `<div style="text-align:center;flex:1;min-width:0;">
+        <div style="width:36px;height:36px;border-radius:50%;background:${c.hex};border:2px solid ${borderColor};margin:0 auto 3px;"></div>
+        <div style="font-size:7px;font-weight:700;color:#2D2D2D;line-height:1.2;">${c.color}</div>
+        <div style="font-size:6.5px;color:#888;line-height:1.3;margin-top:1px;">${c.effect || ""}</div>
+    </div>`).join("");
+
+    // 립 컬러칩
+    const lipChip = (arr) => (arr || []).slice(0, 5).map(c => `<div style="text-align:center;">
+        <div style="width:32px;height:32px;border-radius:50%;background:${c.hex};border:1.5px solid #e0e0e0;margin:0 auto 2px;"></div>
+        <div style="font-size:6.5px;font-weight:600;color:#2D2D2D;max-width:40px;line-height:1.2;">${c.color}</div>
+    </div>`).join("");
+
+    // 팔레트 행
+    const palRow = (label, arr) => {
+        if (!arr?.length) return "";
+        return `<div style="display:flex;align-items:center;margin-bottom:4px;">
+            <span style="font-size:7.5px;font-weight:700;width:50px;flex-shrink:0;color:#888;">${label}</span>
+            <div style="display:flex;gap:3px;">
+                ${arr.map(c => `<div style="width:22px;height:22px;border-radius:50%;background:${c.hex || c.color};border:1.5px solid #e8e8e8;"></div>`).join("")}
+            </div>
+        </div>`;
+    };
+
+    // 메이크업 포인트
     const mkPoints = [
         { num: "01", label: "베이스", text: st.makeup_base || "" },
         { num: "02", label: "아이섀도", text: st.makeup_eyeshadow || "" },
@@ -1301,99 +1372,92 @@ function buildReportHTML(r, s, conf, f, d, st, best, worst, detail, faceImg, goo
         { num: "04", label: "립", text: st.makeup_lip || "" },
     ];
 
+    const hasEye = eyeC.good?.length || eyeC.bad?.length;
+    const hasLip = lipC.good?.length || lipC.bad?.length;
+
     return `
     <div class="report-page" id="report-capture">
-        <div style="text-align:center;padding:20px 24px 12px;border-bottom:2px solid ${s.accent};">
-            <div style="font-size:10px;letter-spacing:4px;color:#999;margin-bottom:4px;">AI PERSONAL COLOR DIAGNOSIS</div>
-            <div style="font-size:18px;font-weight:800;color:#2D2D2D;">퍼스널 컬러 진단 리포트</div>
+        <div style="text-align:center;padding:18px 24px 10px;border-bottom:2px solid ${s.accent};">
+            <div style="font-size:10px;letter-spacing:4px;color:#999;margin-bottom:3px;">AI PERSONAL COLOR DIAGNOSIS</div>
+            <div style="font-size:20px;font-weight:800;color:#2D2D2D;">퍼스널 컬러 진단 리포트</div>
         </div>
-        <div style="padding:12px 24px;display:flex;gap:12px;">
-            <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px 12px;">
-                <div style="font-size:8px;color:#999;">한 줄 요약</div>
-                <div style="font-size:11px;font-weight:700;color:#2D2D2D;margin-top:2px;"><b>${shortUt}</b>. ${r.undertone_reason || ""}</div>
-            </div>
-            <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px 12px;">
-                <div style="font-size:8px;color:#999;">세부 타입</div>
-                <div style="font-size:14px;font-weight:800;color:${s.accent};margin-top:2px;">${detail}</div>
-                <div style="font-size:8px;color:#999;">${s.vibe}</div>
-            </div>
+
+        <div style="padding:10px 20px 6px;">
+            <div style="font-size:11px;font-weight:700;margin-bottom:6px;color:#2D2D2D;">■ 4계절 퍼스널 컬러 비교</div>
+            <div style="display:flex;gap:6px;">${drapeSection}</div>
+            <div style="text-align:right;font-size:6.5px;color:#aaa;margin-top:3px;">※ 별점은 AI 분석 기반의 상대적 어울림 평가입니다.</div>
         </div>
-        <div style="padding:10px 24px;">
-            <div style="font-size:11px;font-weight:700;margin-bottom:8px;color:#2D2D2D;">■ 드레이핑 시뮬레이션</div>
-            <div style="display:flex;justify-content:center;gap:8px;">
-                <div>
-                    <div style="text-align:center;font-size:9px;font-weight:700;color:#4CAF50;margin-bottom:6px;padding:3px 10px;background:#F0FFF0;border-radius:4px;border:1px solid #4CAF50;">잘 어울리는 컬러 (BEST 4)</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">${drapeFace(goodC, "BEST", "#4CAF50")}</div>
+
+        ${hasEye ? `<div style="padding:6px 20px;">
+            <div style="font-size:11px;font-weight:700;margin-bottom:6px;color:#2D2D2D;">■ 아이섀도 진단</div>
+            <div style="display:flex;gap:8px;">
+                <div style="flex:1;border:1px solid #e0e0e0;border-radius:8px;padding:8px;">
+                    <div style="text-align:center;font-size:9px;font-weight:700;color:#2D2D2D;margin-bottom:2px;">추천 컬러</div>
+                    <div style="text-align:center;font-size:7px;color:#888;margin-bottom:6px;">투명감 · 혈색감 · 입체감 강조</div>
+                    <div style="display:flex;gap:4px;justify-content:center;">${eyeChip(eyeC.good, "#e0d8d0")}</div>
                 </div>
-                <div style="display:flex;align-items:center;">
-                    ${faceImg ? `<img src="${faceImg}" style="width:100px;height:120px;object-fit:cover;border-radius:12px;border:3px solid #E8E8E8;">` : ""}
-                </div>
-                <div>
-                    <div style="text-align:center;font-size:9px;font-weight:700;color:#EF5350;margin-bottom:6px;padding:3px 10px;background:#FFF0F0;border-radius:4px;border:1px solid #EF5350;">안 어울리는 컬러 (WORST 4)</div>
-                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">${drapeFace(badC, "WORST", "#EF5350")}</div>
-                </div>
-            </div>
-        </div>
-        <div style="padding:8px 24px;">
-            <div style="font-size:11px;font-weight:700;padding-bottom:4px;border-bottom:1px solid #ddd;margin-bottom:8px;">■ 종합 분석 결과</div>
-            <div style="display:flex;gap:10px;">
-                <div style="width:170px;flex-shrink:0;">
-                    <div style="background:#F8F8F8;border-radius:10px;padding:10px;text-align:center;">
-                        <div style="font-size:8px;color:#999;margin-bottom:2px;">최종 타입</div>
-                        <div style="font-size:16px;font-weight:800;color:${s.accent};margin-bottom:2px;">${detail}</div>
-                        <div style="font-size:7.5px;color:#666;line-height:1.4;margin-top:4px;">${r.skin_description ? r.skin_description.slice(0, 60) + "..." : ""}</div>
-                    </div>
-                </div>
-                ${diamondImg ? `<div style="flex-shrink:0;text-align:center;">
-                    <div style="font-size:9px;font-weight:700;margin-bottom:4px;">■ 얼굴 분석 차트</div>
-                    <img src="${diamondImg}" style="width:140px;height:140px;">
-                    <div style="font-size:7px;color:#999;">※ 5점 만점 기준</div>
-                </div>` : ""}
-                <div style="flex:1;">
-                    <div style="font-size:9px;font-weight:700;margin-bottom:6px;">■ 메이크업 포인트</div>
-                    ${mkPoints.map(m => `<div style="display:flex;gap:6px;margin-bottom:5px;">
-                        <div style="width:20px;height:20px;border-radius:50%;background:${s.accent};color:white;font-size:8px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${m.num}</div>
-                        <div style="font-size:7.5px;line-height:1.5;"><b>${m.label}</b><br>${m.text}</div>
-                    </div>`).join("")}
-                </div>
-            </div>
-        </div>
-        <div style="padding:8px 24px;">
-            <div style="display:flex;gap:16px;">
-                <div style="flex:1;"><div style="font-size:10px;font-weight:700;color:#4CAF50;margin-bottom:6px;">■ 추천 컬러 BEST</div>${colorBar(best, "BEST", "#4CAF50")}</div>
-                <div style="flex:1;"><div style="font-size:10px;font-weight:700;color:#EF5350;margin-bottom:6px;">■ 피해야 할 컬러</div>${colorBar(worst, "WORST", "#EF5350")}</div>
-            </div>
-        </div>
-        ${hasPalette ? `<div style="padding:8px 24px;">
-            <div style="font-size:11px;font-weight:700;margin-bottom:8px;">■ 추천 컬러 팔레트 (${detail})</div>
-            <div style="display:flex;gap:12px;">
-                <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px;">
-                    ${rptPaletteRow("베이스", cp.base)}
-                    ${rptPaletteRow("메인", cp.main)}
-                </div>
-                <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px;">
-                    ${rptPaletteRow("포인트", cp.point)}
-                    ${rptPaletteRow("뉴트럴", cp.neutral)}
+                <div style="flex:1;border:1px solid #EF5350;border-radius:8px;padding:8px;">
+                    <div style="text-align:center;font-size:9px;font-weight:700;color:#EF5350;margin-bottom:2px;">피해야 할 컬러</div>
+                    <div style="text-align:center;font-size:7px;color:#888;margin-bottom:6px;">칙칙함 · 부자연스러움 · 과한 대비</div>
+                    <div style="display:flex;gap:4px;justify-content:center;">${eyeChip(eyeC.bad, "#e8d0d0")}</div>
                 </div>
             </div>
         </div>` : ""}
-        <div style="padding:6px 24px;">
-            <div style="display:flex;gap:10px;">
-                <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px;">
-                    <div style="font-size:9px;font-weight:700;margin-bottom:4px;">헤어 & 패션</div>
-                    <div style="font-size:7.5px;line-height:1.7;"><b>추천 헤어</b> ${st.hair_recommended || ""}<br><b>피해야 할 헤어</b> ${st.hair_avoid || ""}<br><b>패션 조합</b> ${st.fashion_combinations || ""}</div>
-                </div>
-                <div style="flex:1;">
-                    <div style="background:#F8F8F8;border-radius:8px;padding:8px;font-size:8px;line-height:1.8;">
-                        <b>피부</b> · ${f.skin || ""}<br><b>눈동자</b> · ${f.eyes || ""}<br><b>머리색</b> · ${f.hair || ""}<br><b>대비감</b> · ${f.face_contrast || ""}
+
+        <div style="padding:6px 20px;">
+            <div style="font-size:11px;font-weight:700;padding-bottom:4px;border-bottom:1px solid #ddd;margin-bottom:6px;">■ 종합 분석 결과</div>
+            <div style="display:flex;gap:8px;">
+                <div style="width:140px;flex-shrink:0;">
+                    <div style="background:#F8F8F8;border-radius:10px;padding:10px;text-align:center;">
+                        <div style="font-size:7px;color:#999;">최종 타입</div>
+                        <div style="font-size:15px;font-weight:800;color:${s.accent};margin:4px 0;">${detail}</div>
+                        <div style="font-size:7px;color:#666;line-height:1.4;">${r.skin_description ? r.skin_description.slice(0, 50) + "..." : ""}</div>
                     </div>
                 </div>
+                ${diamondImg ? `<div style="flex-shrink:0;text-align:center;">
+                    <div style="font-size:8px;font-weight:700;margin-bottom:2px;">■ 얼굴 분석 차트</div>
+                    <img src="${diamondImg}" style="width:130px;height:130px;">
+                    <div style="font-size:6.5px;color:#999;">※ 5점 만점 기준</div>
+                </div>` : ""}
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:8px;font-weight:700;margin-bottom:4px;">■ 메이크업 포인트</div>
+                    ${mkPoints.map(m => `<div style="display:flex;gap:5px;margin-bottom:4px;">
+                        <div style="width:18px;height:18px;border-radius:50%;background:${s.accent};color:white;font-size:7px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;">${m.num}</div>
+                        <div style="font-size:7px;line-height:1.5;"><b>${m.label}</b><br>${m.text}</div>
+                    </div>`).join("")}
+                </div>
+                ${hasLip ? `<div style="width:160px;flex-shrink:0;">
+                    <div style="font-size:8px;font-weight:700;margin-bottom:4px;">■ 추천 립 컬러</div>
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">${lipChip(lipC.good)}</div>
+                    <div style="font-size:8px;font-weight:700;color:#EF5350;margin-bottom:4px;">■ 피해야 할 립 컬러</div>
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;">${lipChip(lipC.bad)}</div>
+                </div>` : ""}
             </div>
         </div>
-        <div style="margin:6px 24px;padding:10px;background:${s.accent}15;border-radius:10px;border:1px solid ${s.accent}40;text-align:center;">
-            <div style="font-size:11px;font-weight:700;color:#2D2D2D;">${r.one_line_conclusion || ""}</div>
-        </div>
-        <div style="display:flex;justify-content:space-between;padding:8px 24px;font-size:7px;color:#ccc;border-top:1px solid #eee;margin-top:4px;">
+
+        ${hasPalette ? `<div style="padding:6px 20px;">
+            <div style="font-size:11px;font-weight:700;margin-bottom:6px;">■ 추천 컬러 팔레트 (${detail})</div>
+            <div style="display:flex;gap:8px;">
+                <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:6px 8px;">
+                    <div style="font-size:7px;font-weight:700;color:#888;margin-bottom:3px;">베이스 컬러</div>
+                    <div style="display:flex;gap:3px;">${(cp.base||[]).map(c=>`<div style="width:24px;height:24px;border-radius:50%;background:${c.hex||c.color};border:1.5px solid #e8e8e8;"></div>`).join("")}</div>
+                </div>
+                <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:6px 8px;">
+                    <div style="font-size:7px;font-weight:700;color:#888;margin-bottom:3px;">메인 컬러</div>
+                    <div style="display:flex;gap:3px;">${(cp.main||[]).map(c=>`<div style="width:24px;height:24px;border-radius:50%;background:${c.hex||c.color};border:1.5px solid #e8e8e8;"></div>`).join("")}</div>
+                </div>
+                <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:6px 8px;">
+                    <div style="font-size:7px;font-weight:700;color:#888;margin-bottom:3px;">포인트 컬러</div>
+                    <div style="display:flex;gap:3px;">${(cp.point||[]).map(c=>`<div style="width:24px;height:24px;border-radius:50%;background:${c.hex||c.color};border:1.5px solid #e8e8e8;"></div>`).join("")}</div>
+                </div>
+                <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:6px 8px;">
+                    <div style="font-size:7px;font-weight:700;color:#888;margin-bottom:3px;">뉴트럴 컬러</div>
+                    <div style="display:flex;gap:3px;">${(cp.neutral||[]).map(c=>`<div style="width:24px;height:24px;border-radius:50%;background:${c.hex||c.color};border:1.5px solid #e8e8e8;"></div>`).join("")}</div>
+                </div>
+            </div>
+        </div>` : ""}
+
+        <div style="display:flex;justify-content:space-between;padding:8px 20px;font-size:7px;color:#ccc;border-top:1px solid #eee;margin-top:6px;">
             <span>Beauty AI Analyze</span>
             <span>beauty-ai-analyze.onrender.com</span>
         </div>

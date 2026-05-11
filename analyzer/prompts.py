@@ -176,6 +176,40 @@ ANALYSIS_PROMPT = """이 사진의 인물에 대해 퍼스널컬러 + 얼굴 인
     "neutral": [{"color": "컬러명", "hex": "#XXXXXX"}, ...] (뉴트럴 컬러 5개: 무채색/브라운 계열 기본 컬러)
   },
 
+  "eyeshadow_colors": {
+    "good": [
+      {"color": "컬러명", "hex": "#XXXXXX", "effect": "투명감/혈색감/입체감 등 긍정 효과 1문장"},
+      {"color": "컬러명", "hex": "#XXXXXX", "effect": "효과"},
+      {"color": "컬러명", "hex": "#XXXXXX", "effect": "효과"},
+      {"color": "컬러명", "hex": "#XXXXXX", "effect": "효과"},
+      {"color": "컬러명", "hex": "#XXXXXX", "effect": "효과"}
+    ],
+    "bad": [
+      {"color": "컬러명", "hex": "#XXXXXX", "effect": "칙칙함/부자연스러움 등 부정 효과 1문장"},
+      {"color": "컬러명", "hex": "#XXXXXX", "effect": "효과"},
+      {"color": "컬러명", "hex": "#XXXXXX", "effect": "효과"},
+      {"color": "컬러명", "hex": "#XXXXXX", "effect": "효과"},
+      {"color": "컬러명", "hex": "#XXXXXX", "effect": "효과"}
+    ]
+  },
+
+  "lip_colors": {
+    "good": [
+      {"color": "컬러명", "hex": "#XXXXXX"},
+      {"color": "컬러명", "hex": "#XXXXXX"},
+      {"color": "컬러명", "hex": "#XXXXXX"},
+      {"color": "컬러명", "hex": "#XXXXXX"},
+      {"color": "컬러명", "hex": "#XXXXXX"}
+    ],
+    "bad": [
+      {"color": "컬러명", "hex": "#XXXXXX"},
+      {"color": "컬러명", "hex": "#XXXXXX"},
+      {"color": "컬러명", "hex": "#XXXXXX"},
+      {"color": "컬러명", "hex": "#XXXXXX"},
+      {"color": "컬러명", "hex": "#XXXXXX"}
+    ]
+  },
+
   "styling": {
     "makeup_lip": "립 추천 방향 (구체적 컬러명 포함, 2문장)",
     "makeup_blush": "블러셔 추천 (1-2문장)",
