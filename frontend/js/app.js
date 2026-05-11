@@ -856,6 +856,19 @@ function renderStyling(r) {
         <p style="font-weight:700;margin-bottom:0.8rem;">패션 색 조합</p>
         <div class="analysis-block" style="border-left-color:${s.accent || 'var(--primary)'}">${hexToChip(st.fashion_combinations)}</div>
 
+        ${(st.accessory_metal || st.accessory_colors) ? `
+        <p style="font-weight:700;margin-bottom:0.8rem;">악세사리</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:1.2rem;">
+            ${st.accessory_metal ? `<div style="background:var(--bg);border-radius:12px;padding:0.8rem;">
+                <div style="font-size:0.8rem;font-weight:700;margin-bottom:0.3rem;">추천 금속 톤</div>
+                <div style="font-size:0.75rem;color:var(--text-sub);line-height:1.5;">${hexToChip(st.accessory_metal)}</div>
+            </div>` : ""}
+            ${st.accessory_colors ? `<div style="background:var(--bg);border-radius:12px;padding:0.8rem;">
+                <div style="font-size:0.8rem;font-weight:700;margin-bottom:0.3rem;">추천 컬러</div>
+                <div style="font-size:0.75rem;color:var(--text-sub);line-height:1.5;">${hexToChip(st.accessory_colors)}</div>
+            </div>` : ""}
+        </div>` : ""}
+
         ${paletteHtml}
     </div>`;
 }
@@ -1456,6 +1469,26 @@ function buildReportHTML(r, s, conf, f, d, st, best, worst, detail, faceImg, goo
                 </div>
             </div>
         </div>` : ""}
+
+        <div style="padding:6px 20px;">
+            <div style="font-size:11px;font-weight:700;margin-bottom:6px;">■ 패션 & 악세사리</div>
+            <div style="display:flex;gap:8px;">
+                <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px;">
+                    <div style="font-size:8px;font-weight:700;margin-bottom:3px;">패션 색 조합</div>
+                    <div style="font-size:7px;color:#444;line-height:1.6;">${st.fashion_combinations || ""}</div>
+                </div>
+                <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px;">
+                    <div style="font-size:8px;font-weight:700;margin-bottom:3px;">헤어컬러</div>
+                    <div style="font-size:7px;color:#444;line-height:1.6;"><b>추천</b> ${st.hair_recommended || ""}</div>
+                    <div style="font-size:7px;color:#888;line-height:1.6;margin-top:2px;"><b>피하기</b> ${st.hair_avoid || ""}</div>
+                </div>
+                <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:8px;">
+                    <div style="font-size:8px;font-weight:700;margin-bottom:3px;">악세사리</div>
+                    <div style="font-size:7px;color:#444;line-height:1.6;">${st.accessory_metal || ""}</div>
+                    <div style="font-size:7px;color:#444;line-height:1.6;margin-top:2px;">${st.accessory_colors || ""}</div>
+                </div>
+            </div>
+        </div>
 
         <div style="display:flex;justify-content:space-between;padding:8px 20px;font-size:7px;color:#ccc;border-top:1px solid #eee;margin-top:6px;">
             <span>Beauty AI Analyze</span>

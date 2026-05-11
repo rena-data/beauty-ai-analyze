@@ -217,7 +217,9 @@ ANALYSIS_PROMPT = """이 사진의 인물에 대해 퍼스널컬러 + 얼굴 인
     "makeup_base": "베이스 추천 (1문장)",
     "hair_recommended": "추천 헤어컬러 2-3개와 이유",
     "hair_avoid": "피해야 할 헤어컬러 1-2개와 이유",
-    "fashion_combinations": "잘 어울리는 패션 색 조합 2-3가지 (구체적)"
+    "fashion_combinations": "잘 어울리는 패션 색 조합 2-3가지 (구체적)",
+    "accessory_metal": "어울리는 금속 톤 (골드/실버/로즈골드 등)과 이유 (1문장)",
+    "accessory_colors": "악세사리/가방/신발에 추천하는 컬러 2-3개 (구체적 컬러명)"
   },
 
   "skin_description": "피부톤 종합 설명 (2-3문장)",
