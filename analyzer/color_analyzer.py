@@ -3,6 +3,7 @@
 import io
 import json
 import os
+import re
 import time
 
 from google import genai
@@ -60,9 +61,42 @@ def _image_to_part(image: Image.Image) -> types.Part:
 
 def _parse_json_response(text: str) -> dict:
     text = text.strip()
+    # 마크다운 코드펜스 제거
     if text.startswith("```"):
         lines = text.split("\n")
-        text = "\n".join(lines[1:-1])
+        # 끝에 ```가 있으면 제거, 없으면 마지막 줄 유지
+        end = -1 if lines[-1].strip().startswith("```") else len(lines)
+        text = "\n".join(lines[1:end])
+
+    # 1차: 직접 파싱 시도
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+
+    # 2차: JSON 객체 부분만 추출 (앞뒤 텍스트 제거)
+    start = text.find("{")
+    end = text.rfind("}")
+    if start != -1 and end != -1 and end > start:
+        candidate = text[start:end + 1]
+        try:
+            return json.loads(candidate)
+        except json.JSONDecodeError:
+            pass
+
+    # 3차: 흔한 LLM JSON 오류 정리 후 재시도
+    if start != -1 and end != -1:
+        cleaned = text[start:end + 1]
+        # 한 줄 주석 제거 (// ...)
+        cleaned = re.sub(r'//[^\n]*', '', cleaned)
+        # 닫는 괄호/대괄호 앞 trailing comma 제거
+        cleaned = re.sub(r',\s*([}\]])', r'\1', cleaned)
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError:
+            pass
+
+    # 모두 실패 시 원본으로 에러 발생 (디버깅용)
     return json.loads(text)
 
 
@@ -105,6 +139,12 @@ def analyze_image(image: Image.Image) -> dict:
 
                 return result
 
+            except json.JSONDecodeError as e:
+                last_err = e
+                if attempt < MAX_RETRIES - 1:
+                    time.sleep(RETRY_DELAY)
+                    continue
+                break  # JSON 파싱 실패는 재시도/다음 모델로
             except ValueError:
                 raise  # 얼굴 없음, 필드 누락 등은 즉시 에러
             except Exception as e:
