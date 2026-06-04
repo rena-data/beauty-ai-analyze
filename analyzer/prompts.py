@@ -151,6 +151,8 @@ ANALYSIS_PROMPT = """이 사진의 인물에 대해 퍼스널컬러 + 얼굴 인
   "worst_colors": [
     {"color": "컬러명", "hex": "#XXXXXX", "reason": "안 어울리는 이유 1문장"},
     {"color": "컬러명", "hex": "#XXXXXX", "reason": "이유"},
+    {"color": "컬러명", "hex": "#XXXXXX", "reason": "이유"},
+    {"color": "컬러명", "hex": "#XXXXXX", "reason": "이유"},
     {"color": "컬러명", "hex": "#XXXXXX", "reason": "이유"}
   ],
 
@@ -235,10 +237,3 @@ ANALYSIS_PROMPT = """이 사진의 인물에 대해 퍼스널컬러 + 얼굴 인
 모든 텍스트는 자연스러운 한국어로 작성하세요.
 hex 코드는 반드시 유효한 6자리 헥스 코드여야 합니다."""
 
-NO_FACE_PROMPT = """이 이미지에 사람의 얼굴이 포함되어 있는지 확인해주세요.
-
-다음 JSON 형식으로만 응답하세요:
-{
-  "has_face": true 또는 false,
-  "reason": "얼굴이 감지되지 않은 이유 또는 확인 메시지"
-}"""
