@@ -9,7 +9,7 @@
         "reason": "밝은 코랄이 봄 웜톤 남성의 얼굴을 화사하게",
         "color_hex": "#FF8FAB",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996177"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%A6%B4%EB%A0%89%EC%8A%A4%20%ED%95%8F%20%ED%81%AC%EB%A3%A8%EB%84%A5%20%EB%B0%98%ED%8C%94%20%ED%8B%B0%EC%85%94%EC%B8%A0"
       },
       {
         "name": "릴렉스 핏 옥스포드 셔츠 [피치]",
@@ -19,7 +19,7 @@
         "reason": "따뜻한 피치 옥스포드가 봄 웜톤에 세련된 캐주얼",
         "color_hex": "#FFDAB9",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/854337"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%A6%B4%EB%A0%89%EC%8A%A4%20%ED%95%8F%20%EC%98%A5%EC%8A%A4%ED%8F%AC%EB%93%9C%20%EC%85%94%EC%B8%A0"
       },
       {
         "name": "센터 로고 피그먼트 티셔츠 [오렌지]",
@@ -29,7 +29,7 @@
         "reason": "트렌디 피그먼트 오렌지가 봄 웜톤에 빈티지 무드",
         "color_hex": "#FF8C00",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/6125526"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EC%84%BC%ED%84%B0%20%EB%A1%9C%EA%B3%A0%20%ED%94%BC%EA%B7%B8%EB%A8%BC%ED%8A%B8%20%ED%8B%B0%EC%85%94%EC%B8%A0"
       },
       {
         "name": "에센셜 쿨 코튼 2팩 티셔츠",
@@ -39,7 +39,7 @@
         "reason": "무신사 반팔 1위, 봄 이너로 활용도 높은 기본템",
         "color_hex": "#FFFFFF",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/1848166"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EC%97%90%EC%84%BC%EC%85%9C%20%EC%BF%A8%20%EC%BD%94%ED%8A%BC%202%ED%8C%A9%20%ED%8B%B0%EC%85%94%EC%B8%A0"
       },
       {
         "name": "베이식 크루넥 티셔츠 [베이지]",
@@ -49,7 +49,7 @@
         "reason": "웜한 베이지가 봄 웜톤 남성에 깔끔한 데일리룩",
         "color_hex": "#F5F5DC",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%B2%A0%EC%9D%B4%EC%8B%9D%20%ED%81%AC%EB%A3%A8%EB%84%A5%20%ED%8B%B0%EC%85%94%EC%B8%A0"
       }
     ],
     "bottom": [
@@ -61,7 +61,7 @@
         "reason": "클래식 베이지 치노가 봄 웜톤에 깔끔한 밸런스",
         "color_hex": "#F5F5DC",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%A0%88%EA%B7%A4%EB%9F%AC%ED%95%8F%20%EC%B9%98%EB%85%B8%20%ED%8C%AC%EC%B8%A0"
       },
       {
         "name": "라이트 워시 스트레이트 데님",
@@ -71,7 +71,7 @@
         "reason": "밝은 워싱 데님이 봄 웜톤의 경쾌한 캐주얼",
         "color_hex": "#ADD8E6",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%9D%BC%EC%9D%B4%ED%8A%B8%20%EC%9B%8C%EC%8B%9C%20%EC%8A%A4%ED%8A%B8%EB%A0%88%EC%9D%B4%ED%8A%B8%20%EB%8D%B0%EB%8B%98"
       }
     ],
     "outer": [
@@ -83,7 +83,7 @@
         "reason": "캐멀 하링턴이 봄 웜톤 남성에 클래식한 스타일",
         "color_hex": "#C19A6B",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%ED%95%98%EB%A7%81%ED%84%B4%20%EC%9E%90%EC%BC%93"
       },
       {
         "name": "라이트 블루종 자켓 [베이지]",
@@ -93,7 +93,7 @@
         "reason": "따뜻한 베이지 블루종이 봄 웜톤의 캐주얼 아우터",
         "color_hex": "#F5F5DC",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/1848166"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%9D%BC%EC%9D%B4%ED%8A%B8%20%EB%B8%94%EB%A3%A8%EC%A2%85%20%EC%9E%90%EC%BC%93"
       }
     ]
   },
@@ -107,7 +107,7 @@
         "reason": "2026 트렌드 스카이블루가 여름 쿨톤 남성에 시원한 인상",
         "color_hex": "#87CEEB",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996177"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%A6%B4%EB%A0%89%EC%8A%A4%20%ED%95%8F%20%ED%81%AC%EB%A3%A8%EB%84%A5%20%EB%B0%98%ED%8C%94%20%ED%8B%B0%EC%85%94%EC%B8%A0"
       },
       {
         "name": "오버사이즈 옥스포드 셔츠 [화이트]",
@@ -117,7 +117,7 @@
         "reason": "깨끗한 화이트 셔츠가 쿨톤 남성의 세련된 기본",
         "color_hex": "#FFFFFF",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/2093486"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EC%98%A4%EB%B2%84%EC%82%AC%EC%9D%B4%EC%A6%88%20%EC%98%A5%EC%8A%A4%ED%8F%AC%EB%93%9C%20%EC%85%94%EC%B8%A0"
       },
       {
         "name": "리넨 블렌드 반팔 셔츠 [네이비]",
@@ -127,7 +127,7 @@
         "reason": "시원한 네이비 리넨이 여름 쿨톤에 차분한 매력",
         "color_hex": "#191970",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/854337"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%A6%AC%EB%84%A8%20%EB%B8%94%EB%A0%8C%EB%93%9C%20%EB%B0%98%ED%8C%94%20%EC%85%94%EC%B8%A0"
       },
       {
         "name": "베이식 크루넥 티셔츠 [그레이]",
@@ -137,7 +137,7 @@
         "reason": "소프트 그레이가 여름 쿨톤 남성에 깔끔한 데일리",
         "color_hex": "#D3D3D3",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%B2%A0%EC%9D%B4%EC%8B%9D%20%ED%81%AC%EB%A3%A8%EB%84%A5%20%ED%8B%B0%EC%85%94%EC%B8%A0"
       }
     ],
     "bottom": [
@@ -149,7 +149,7 @@
         "reason": "소프트 그레이가 여름 쿨톤 남성에 깔끔한 스타일링",
         "color_hex": "#D3D3D3",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EC%8A%AC%EB%A6%BC%ED%95%8F%20%EC%B9%98%EB%85%B8%20%ED%8C%AC%EC%B8%A0"
       },
       {
         "name": "미드 워시 스트레이트 데님",
@@ -159,7 +159,7 @@
         "reason": "블루 워시 데님이 여름 쿨톤 남성의 캐주얼 스타일",
         "color_hex": "#6495ED",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%AF%B8%EB%93%9C%20%EC%9B%8C%EC%8B%9C%20%EC%8A%A4%ED%8A%B8%EB%A0%88%EC%9D%B4%ED%8A%B8%20%EB%8D%B0%EB%8B%98"
       }
     ],
     "outer": [
@@ -171,7 +171,7 @@
         "reason": "클래식 네이비가 여름 쿨톤 남성의 시그니처 아우터",
         "color_hex": "#191970",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EC%BD%94%ED%8A%BC%20%EB%B8%94%EB%A0%88%EC%9D%B4%EC%A0%80"
       }
     ]
   },
@@ -185,7 +185,7 @@
         "reason": "깊은 브라운이 가을 웜톤 남성의 고급스러운 무드",
         "color_hex": "#8B4513",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%B2%A0%EC%9D%B4%EC%8B%9D%20%ED%81%AC%EB%A3%A8%EB%84%A5%20%EB%8B%88%ED%8A%B8"
       },
       {
         "name": "릴렉스 핏 옥스포드 셔츠 [카키]",
@@ -195,7 +195,7 @@
         "reason": "올리브 카키가 가을 웜톤 남성의 내추럴한 매력",
         "color_hex": "#556B2F",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/854337"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%A6%B4%EB%A0%89%EC%8A%A4%20%ED%95%8F%20%EC%98%A5%EC%8A%A4%ED%8F%AC%EB%93%9C%20%EC%85%94%EC%B8%A0"
       },
       {
         "name": "피그먼트 워싱 반팔티 [브라운]",
@@ -205,7 +205,7 @@
         "reason": "2025 트렌드 더티워싱 브라운이 가을 웜톤에 빈티지 감성",
         "color_hex": "#8B4513",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/6125526"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%ED%94%BC%EA%B7%B8%EB%A8%BC%ED%8A%B8%20%EC%9B%8C%EC%8B%B1%20%EB%B0%98%ED%8C%94%ED%8B%B0"
       },
       {
         "name": "플란넬 체크 셔츠 [브라운]",
@@ -215,7 +215,7 @@
         "reason": "가을 무드 브라운 체크가 웜톤 남성에 자연스러운 멋",
         "color_hex": "#8B4513",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/1848166"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%ED%94%8C%EB%9E%80%EB%84%AC%20%EC%B2%B4%ED%81%AC%20%EC%85%94%EC%B8%A0"
       }
     ],
     "bottom": [
@@ -227,7 +227,7 @@
         "reason": "깊은 카키가 가을 웜톤 남성의 따뜻한 톤과 조화",
         "color_hex": "#6B8E23",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%A0%88%EA%B7%A4%EB%9F%AC%ED%95%8F%20%EC%B9%98%EB%85%B8%20%ED%8C%AC%EC%B8%A0"
       },
       {
         "name": "더티 워싱 스트레이트 데님",
@@ -237,7 +237,7 @@
         "reason": "트렌드 더티 워싱이 가을 웜톤의 빈티지 스타일",
         "color_hex": "#4A4A4A",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%8D%94%ED%8B%B0%20%EC%9B%8C%EC%8B%B1%20%EC%8A%A4%ED%8A%B8%EB%A0%88%EC%9D%B4%ED%8A%B8%20%EB%8D%B0%EB%8B%98"
       }
     ],
     "outer": [
@@ -249,7 +249,7 @@
         "reason": "클래식 브라운이 가을 웜톤 남성의 시그니처",
         "color_hex": "#D2691E",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EC%9A%B8%20%EB%B8%94%EB%A0%8C%EB%93%9C%20%EC%8B%B1%EA%B8%80%20%EC%BD%94%ED%8A%B8"
       },
       {
         "name": "필드 자켓 [카키]",
@@ -259,7 +259,7 @@
         "reason": "밀리터리 카키가 가을 웜톤 남성에 자연스러운 멋",
         "color_hex": "#6B8E23",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/1848166"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%ED%95%84%EB%93%9C%20%EC%9E%90%EC%BC%93"
       }
     ]
   },
@@ -273,7 +273,7 @@
         "reason": "클래식 블랙이 겨울 쿨톤 남성의 강렬한 대비감",
         "color_hex": "#000000",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%B2%A0%EC%9D%B4%EC%8B%9D%20%ED%81%AC%EB%A3%A8%EB%84%A5%20%ED%8B%B0%EC%85%94%EC%B8%A0"
       },
       {
         "name": "오버사이즈 옥스포드 셔츠 [화이트]",
@@ -283,7 +283,7 @@
         "reason": "선명한 화이트가 겨울 쿨톤 남성의 맑은 피부를 돋보이게",
         "color_hex": "#FFFFFF",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/2093486"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EC%98%A4%EB%B2%84%EC%82%AC%EC%9D%B4%EC%A6%88%20%EC%98%A5%EC%8A%A4%ED%8F%AC%EB%93%9C%20%EC%85%94%EC%B8%A0"
       },
       {
         "name": "로고 반팔 티셔츠 [블랙]",
@@ -293,7 +293,7 @@
         "reason": "스트릿 블랙 티가 겨울 쿨톤 남성에 강렬한 인상",
         "color_hex": "#000000",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/brand/thisisneverthat"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%A1%9C%EA%B3%A0%20%EB%B0%98%ED%8C%94%20%ED%8B%B0%EC%85%94%EC%B8%A0"
       },
       {
         "name": "베이식 크루넥 니트 [네이비]",
@@ -303,7 +303,7 @@
         "reason": "딥 네이비가 겨울 쿨톤 남성의 세련된 겨울 무드",
         "color_hex": "#191970",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%B2%A0%EC%9D%B4%EC%8B%9D%20%ED%81%AC%EB%A3%A8%EB%84%A5%20%EB%8B%88%ED%8A%B8"
       }
     ],
     "bottom": [
@@ -315,7 +315,7 @@
         "reason": "선명한 블랙이 겨울 쿨톤 남성의 모던한 실루엣",
         "color_hex": "#000000",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EC%8A%AC%EB%A6%BC%20%EC%8A%A4%ED%8A%B8%EB%A0%88%EC%9D%B4%ED%8A%B8%20%EC%8A%AC%EB%9E%99%EC%8A%A4"
       },
       {
         "name": "다크 워시 스트레이트 데님 [네이비]",
@@ -325,7 +325,7 @@
         "reason": "딥 네이비가 겨울 쿨톤 남성의 세련된 캐주얼",
         "color_hex": "#191970",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EB%8B%A4%ED%81%AC%20%EC%9B%8C%EC%8B%9C%20%EC%8A%A4%ED%8A%B8%EB%A0%88%EC%9D%B4%ED%8A%B8%20%EB%8D%B0%EB%8B%98"
       }
     ],
     "outer": [
@@ -337,7 +337,7 @@
         "reason": "클래식 블랙 코트가 겨울 쿨톤 남성의 시그니처",
         "color_hex": "#000000",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EC%9A%B8%20%EB%B8%94%EB%A0%8C%EB%93%9C%20%EC%8B%B1%EA%B8%80%20%EC%BD%94%ED%8A%B8"
       },
       {
         "name": "코튼 블레이저 [네이비]",
@@ -347,7 +347,7 @@
         "reason": "딥 네이비가 겨울 쿨톤 남성의 미니멀 시크",
         "color_hex": "#191970",
         "image_url": "",
-        "buy_url": "https://www.musinsa.com/products/996498"
+        "buy_url": "https://www.musinsa.com/search/goods?keyword=%EC%BD%94%ED%8A%BC%20%EB%B8%94%EB%A0%88%EC%9D%B4%EC%A0%80"
       }
     ]
   }

@@ -243,12 +243,41 @@ body {
 
 .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
 .metric-card {
-    background: var(--white); border-radius: 12px;
-    padding: 1rem; text-align: center;
+    background: var(--white); border-radius: 14px;
+    padding: 1.2rem 1rem; text-align: center;
     border: 1px solid var(--border);
+    min-height: 110px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
-.metric-label { font-size: 0.8rem; color: var(--text-sub); }
-.metric-value { font-size: 1.1rem; font-weight: 800; margin-top: 0.3rem; }
+.metric-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+.metric-icon { font-size: 1.6rem; margin-bottom: 0.3rem; line-height: 1; }
+.metric-label { font-size: 0.78rem; color: var(--text-sub); letter-spacing: 0.02em; }
+.metric-value { font-size: 1.15rem; font-weight: 800; margin-top: 0.25rem; }
+
+/* ── Detail sections ── */
+.detail-section {
+    background: var(--white); border-radius: 14px;
+    border: 1px solid var(--border); margin-bottom: 0.8rem;
+    overflow: hidden; transition: box-shadow 0.2s;
+}
+.detail-section:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.04); }
+.detail-section-header {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.8rem 1rem; background: var(--bg);
+    border-bottom: 1px solid var(--border);
+}
+.detail-section-header strong { font-size: 0.88rem; }
+.detail-section-icon {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; flex-shrink: 0;
+}
+.detail-section-body {
+    padding: 1rem; font-size: 0.9rem; line-height: 1.75;
+    color: var(--text);
+}
 
 /* ── Draping ── */
 .draping-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }

@@ -1,9 +1,12 @@
 .env
+!.env.example
 __pycache__/
 *.pyc
+*.log
 .DS_Store
 venv/
 .venv/
+.claude/
 
 # 레거시 (Streamlit 버전)
 app.py

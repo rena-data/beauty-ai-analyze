@@ -622,12 +622,12 @@ function renderDraping(r) {
     }).join("");
 
     // 드레이핑 Best/Worst with face
-    const drapCard = (c, border) => `<div style="text-align:center;flex:1;min-width:0;">
+    const drapCard = (c, border) => `<div style="text-align:center;flex:1;min-width:0;display:flex;flex-direction:column;">
         <div style="height:70px;background:${c.hex};border-radius:8px;display:flex;align-items:flex-end;justify-content:center;border:2px solid ${border};">
             ${faceUrl ? `<img src="${faceUrl}" style="width:50px;height:50px;object-fit:cover;border-radius:50%;border:2px solid white;margin-bottom:4px;">` : ''}
         </div>
         <div style="font-size:0.72rem;font-weight:700;margin-top:4px;">${c.color}</div>
-        <div style="font-size:0.65rem;color:var(--text-sub);line-height:1.3;margin-top:2px;">${c.effect}</div>
+        <div style="font-size:0.65rem;color:var(--text-sub);line-height:1.3;margin-top:2px;min-height:2.6em;">${c.effect}</div>
     </div>`;
 
     // Best/Worst 큰 컬러바 (1-2)
@@ -649,14 +649,14 @@ function renderDraping(r) {
     <!-- 컬러 드레이핑 -->
     <div class="card" style="margin-top:1rem;">
         <h3 class="section-title">컬러 드레이핑 시뮬레이션</h3>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start;">
             <div>
                 <p style="font-weight:700;color:var(--green);margin-bottom:0.8rem;font-size:0.9rem;">잘 어울리는 컬러 (BEST 4)</p>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">${goodC.slice(0,4).map(c => drapCard(c,'#4CAF50')).join('')}</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;grid-auto-rows:1fr;">${goodC.slice(0,4).map(c => drapCard(c,'#4CAF50')).join('')}</div>
             </div>
             <div>
                 <p style="font-weight:700;color:var(--red);margin-bottom:0.8rem;font-size:0.9rem;">안 어울리는 컬러 (WORST 4)</p>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">${badC.slice(0,4).map(c => drapCard(c,'#EF5350')).join('')}</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;grid-auto-rows:1fr;">${badC.slice(0,4).map(c => drapCard(c,'#EF5350')).join('')}</div>
             </div>
         </div>
     </div>
@@ -683,7 +683,7 @@ function drawRadarSVG(radar) {
     const labels = ["밝기","채도","대비","온기","선명도"];
     const keys = ["brightness","saturation","contrast","warmth","clarity"];
     const vals = keys.map(k => (radar[k] || 3));
-    const cx = 80, cy = 80, R = 60;
+    const cx = 90, cy = 90, R = 55;
     const angleStep = (2 * Math.PI) / 5;
     const startAngle = -Math.PI / 2;
 
@@ -721,7 +721,7 @@ function drawRadarSVG(radar) {
         return `<text x="${x}" y="${y}" text-anchor="middle" dominant-baseline="middle" font-size="8" fill="#6B6B6B" font-weight="600">${lb}</text>`;
     }).join("");
 
-    return `<svg viewBox="0 0 160 160" style="width:160px;height:160px;">
+    return `<svg viewBox="0 0 180 180" style="width:180px;height:180px;">
         ${bgLines}${axisLines}
         <polygon points="${dataPts}" fill="rgba(232,160,191,0.25)" stroke="#E8A0BF" stroke-width="1.5"/>
         ${labelEls}
@@ -768,6 +768,7 @@ async function renderPalette(el, r) {
         const data = await resp.json();
         const s = SM[r.season_type];
         const sw = (arr) => (arr || []).map((c) => `<div class="swatch"><div class="swatch-tooltip">${c.name} (${c.hex})</div><div class="swatch-color" style="background:${c.hex}"></div><div class="swatch-name">${c.name}</div></div>`).join("");
+        const swWorst = (arr) => (arr || []).map((c) => `<div class="swatch"><div class="swatch-tooltip">${c.name} (${c.hex})</div><div class="swatch-color" style="background:${c.hex};opacity:0.7;"></div><div class="swatch-name">${c.name}</div></div>`).join("");
         const catRow = (label, arr) => !arr?.length ? "" : `
             <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.6rem;">
                 <span style="font-size:0.75rem;font-weight:700;width:55px;flex-shrink:0;color:var(--text-sub);">${label}</span>
@@ -782,26 +783,33 @@ async function renderPalette(el, r) {
         el.innerHTML = `<div class="card">
             <h3 class="section-title">${s.emoji} ${data.name || s.ko} 컬러 팔레트</h3>
             ${hasCats ? `
-                <p style="font-weight:700;margin-bottom:0.8rem;">추천 컬러 팔레트</p>
-                <div style="background:var(--bg);border-radius:12px;padding:1rem;margin-bottom:1.2rem;">
-                    ${catRow("베이스", data.base)}
+                <p style="font-weight:700;margin-bottom:0.3rem;">추천 컬러 팔레트</p>
+                <p style="font-size:0.75rem;color:var(--text-sub);margin-bottom:0.8rem;line-height:1.6;">※ 아래 컬러는 아이섀도 메이크업에 활용하기 좋은 추천 색상 조합입니다.</p>
+                <div style="background:var(--bg);border-radius:12px;padding:1rem;margin-bottom:0.6rem;">
+                    ${catRow("섀도 베이스", data.base)}
                     ${catRow("메인", data.main)}
                     ${catRow("포인트", data.point)}
                     ${catRow("뉴트럴", data.neutral)}
+                </div>
+                <div style="font-size:0.7rem;color:#999;line-height:1.7;padding:0.6rem 0.8rem;background:#F8F8F8;border-radius:8px;margin-bottom:1.2rem;">
+                    <b>섀도 베이스</b> · 눈두덩 전체에 넓게 펴 바르는 아이섀도 밑색<br>
+                    <b>메인</b> · 메이크업의 중심이 되는 대표 색상<br>
+                    <b>포인트</b> · 눈꼬리, 삼각존 등에 강조로 사용하는 색상<br>
+                    <b>뉴트럴</b> · 음영·블렌딩에 활용하는 자연스러운 보조 색상
                 </div>
             ` : ""}
             <p style="font-weight:700;color:var(--green);margin-bottom:0.8rem;">Best Colors</p>
             <div class="palette-wrap">${sw(data.best)}</div>
             <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0;">
-            <p style="font-weight:700;color:var(--red);margin-bottom:0.8rem;">Worst Colors</p>
-            <div class="palette-wrap">${sw(data.worst)}</div></div>`;
+            <p style="font-weight:700;color:var(--red);margin-bottom:0.4rem;">Worst Colors</p>
+            <p style="font-size:0.78rem;color:var(--text-sub);margin-bottom:0.8rem;">이 컬러들은 얼굴이 칙칙하거나 피곤해 보일 수 있어 피하는 것이 좋습니다.</p>
+            <div class="palette-wrap">${swWorst(data.worst)}</div></div>`;
     } catch { el.innerHTML = `<div class="card"><p>팔레트를 불러올 수 없습니다.</p></div>`; }
 }
 
 // ── Styling (1-1c: 메이크업 포인트 + 1-1d: 팔레트 3행 + 1-3: 패션 원형칩) ──
 function renderStyling(r) {
     const st = r.styling || {}, s = SM[r.season_type] || {};
-    const cp = r.color_palette || {};
 
     // 메이크업 포인트 카드 (아이콘 + 설명)
     const makeupCards = [
@@ -815,29 +823,12 @@ function renderStyling(r) {
         <div style="font-size:0.75rem;color:var(--text-sub);line-height:1.5;">${hexToChip(m.text)}</div>
     </div>`).join("");
 
-    // 컬러 팔레트 3행 (원형 칩)
-    const paletteRow = (label, colors) => {
-        if (!colors || !colors.length) return "";
-        return `<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
-            <span style="font-size:0.75rem;font-weight:700;width:50px;flex-shrink:0;color:var(--text-sub);">${label}</span>
-            <div style="display:flex;gap:6px;flex-wrap:wrap;">
-                ${colors.map(c => `<div style="text-align:center;" title="${c.color}">
-                    <div style="width:28px;height:28px;border-radius:50%;background:${c.hex};border:2px solid #e0e0e0;"></div>
-                </div>`).join("")}
-            </div>
-        </div>`;
-    };
-    const hasPalette = cp.base || cp.main || cp.point || cp.neutral || cp.basic || cp.accent;
-    const paletteHtml = hasPalette ? `
-        <div style="margin-top:1rem;">
-            <p style="font-weight:700;margin-bottom:0.6rem;">추천 컬러 팔레트</p>
-            <div style="background:var(--bg);border-radius:12px;padding:1rem;">
-                ${paletteRow("베이스", cp.base || cp.basic)}
-                ${paletteRow("메인", cp.main)}
-                ${paletteRow("포인트", cp.point)}
-                ${paletteRow("뉴트럴", cp.neutral || cp.accent)}
-            </div>
-        </div>` : "";
+    // 스타일링 활용 가이드
+    const guideItems = [
+        st.styling_tip ? { icon: "💡", label: "스타일링 팁", text: st.styling_tip } : null,
+        st.fashion_combinations ? null : null,
+    ].filter(Boolean);
+
 
     return `<div class="card">
         <h3 class="section-title">스타일링 제안</h3>
@@ -869,7 +860,6 @@ function renderStyling(r) {
             </div>` : ""}
         </div>` : ""}
 
-        ${paletteHtml}
     </div>`;
 }
 
@@ -928,19 +918,42 @@ async function renderProducts(el, r, type) {
 function renderDetail(r) {
     const s = SM[r.season_type] || {};
     const ut = r.undertone || "";
-    const shortUt = ut.includes("(") ? ut.split("(")[0].trim() : ut;
+    const shortUt = ut.includes("웜톤") ? "웜톤" : ut.includes("쿨톤") ? "쿨톤" : ut.split(/[,(]/)[0].trim();
+    const utDetail = ut.length > shortUt.length ? ut : "";
+    const isWarm = shortUt.includes("웜");
+    const utIcon = isWarm ? "🔥" : "💎";
+    const utColor = isWarm ? "#FF8FAB" : "#C8A2C8";
+    const contrastLv = r.contrast_level || "중간";
+    const contrastIcon = contrastLv.includes("고") ? "◑" : contrastLv.includes("저") ? "◔" : "◐";
     return `<div class="card">
         <h3 class="section-title">퍼스널컬러 상세 분석</h3>
-        <div class="metric-grid">
-            <div class="metric-card"><div class="metric-label">언더톤</div><div class="metric-value">${shortUt}</div></div>
-            <div class="metric-card"><div class="metric-label">대비감</div><div class="metric-value">${r.contrast_level || "중간"}</div></div>
-            <div class="metric-card"><div class="metric-label">시즌 타입</div><div class="metric-value">${s.emoji} ${r.season_detail || s.ko}</div></div>
+        <div class="detail-hero" style="background:linear-gradient(135deg,${s.accent}18,${s.accent}08);border:1px solid ${s.accent}30;border-radius:16px;padding:1.5rem;margin-bottom:1.5rem;text-align:center">
+            <div style="font-size:2.8rem;margin-bottom:0.4rem">${s.emoji}</div>
+            <div style="font-size:1.3rem;font-weight:800;color:${s.accent};margin-bottom:0.2rem">${r.season_detail || s.ko}</div>
+            <div style="font-size:0.85rem;color:var(--text-sub)">${s.vibe}</div>
         </div>
-        ${r.undertone_reason ? `<div class="analysis-block" style="border-left-color:var(--primary)"><strong>언더톤 판정 근거</strong>${r.undertone_reason}</div>` : ""}
-        <div class="analysis-block"><strong>피부톤 특성</strong>${r.skin_description || ""}</div>
-        <div class="analysis-block"><strong>분석 근거</strong>${r.analysis_reasoning || ""}</div>
-        ${r.celebrity_reference ? `<div class="analysis-block" style="border-left-color:#FFD700"><strong>비슷한 퍼스널컬러의 연예인</strong>${r.celebrity_reference}</div>` : ""}
-        ${r.special_notes ? `<div class="analysis-block" style="border-left-color:#C0C0C0"><strong>참고사항</strong>${r.special_notes}</div>` : ""}
+        <div class="metric-grid">
+            <div class="metric-card" style="border-top:3px solid ${utColor}">
+                <div class="metric-icon" style="color:${utColor}">${utIcon}</div>
+                <div class="metric-label">언더톤</div>
+                <div class="metric-value">${shortUt}</div>
+            </div>
+            <div class="metric-card" style="border-top:3px solid ${s.accent}">
+                <div class="metric-icon" style="color:${s.accent}">${contrastIcon}</div>
+                <div class="metric-label">대비감</div>
+                <div class="metric-value">${contrastLv}</div>
+            </div>
+            <div class="metric-card" style="border-top:3px solid ${s.accent}">
+                <div class="metric-icon" style="color:${s.accent}">${s.emoji}</div>
+                <div class="metric-label">시즌</div>
+                <div class="metric-value">${s.ko}</div>
+            </div>
+        </div>
+        ${r.undertone_reason || utDetail ? `<div class="analysis-block" style="border-left-color:var(--primary)"><strong>🔬 언더톤 판정 근거</strong>${utDetail ? `<p style="margin-bottom:0.4rem;color:var(--text-sub);font-size:0.85rem">${utDetail}</p>` : ""}${r.undertone_reason || ""}</div>` : ""}
+        <div class="analysis-block" style="border-left-color:${s.accent}"><strong>🎨 피부톤 특성</strong>${r.skin_description || ""}</div>
+        <div class="analysis-block"><strong>📋 분석 근거</strong>${r.analysis_reasoning || ""}</div>
+        ${r.celebrity_reference ? `<div class="analysis-block" style="border-left-color:#FFD700"><strong>⭐ 비슷한 퍼스널컬러의 연예인</strong>${r.celebrity_reference}</div>` : ""}
+        ${r.special_notes ? `<div class="analysis-block" style="border-left-color:#C0C0C0"><strong>💡 참고사항</strong>${r.special_notes}</div>` : ""}
     </div>`;
 }
 
@@ -1033,7 +1046,11 @@ async function runFashionMatch() {
         gEvent("fashion_match", { season_type: analysisResult.season_type, grade: result.match_grade });
         resultEl.innerHTML = renderFashionMatchResult(result);
     } catch (e) {
-        resultEl.innerHTML = `<div class="error-msg">${e.message}</div>`;
+        const errDiv = document.createElement("div");
+        errDiv.className = "error-msg";
+        errDiv.textContent = e.message;
+        resultEl.innerHTML = "";
+        resultEl.appendChild(errDiv);
     } finally {
         loading.classList.add("hidden");
         btn.disabled = false;
@@ -1269,8 +1286,16 @@ async function generateReportCanvas() {
     const radar = r.face_radar || {};
     const diamondImg = (radar.warmth || radar.brightness) ? makeDiamondChart(radar, s.accent) : "";
 
-    // palette
-    const cp = r.color_palette || {};
+    // palette — 정적 API 데이터 사용
+    let cp = r.color_palette || {};
+    try {
+        const palResp = await fetch(`/api/palettes/${r.season_type}`);
+        if (palResp.ok) {
+            const palData = await palResp.json();
+            cp = { base: palData.base, main: palData.main, point: palData.point, neutral: palData.neutral };
+        }
+    } catch {}
+
 
     const drapeFace = (colors, label, borderColor) => colors.slice(0, 4).map(c => `
         <div style="text-align:center;">
@@ -1354,8 +1379,8 @@ function buildReportHTML(r, s, conf, f, d, st, best, worst, detail, faceImg, goo
     }).join("");
 
     // 아이섀도 컬러칩
-    const eyeChip = (arr, borderColor) => (arr || []).slice(0, 5).map(c => `<div style="text-align:center;flex:1;min-width:0;">
-        <div style="width:36px;height:36px;border-radius:50%;background:${c.hex};border:2px solid ${borderColor};margin:0 auto 3px;"></div>
+    const eyeChip = (arr) => (arr || []).slice(0, 5).map(c => `<div style="text-align:center;flex:1;min-width:0;">
+        <div style="width:36px;height:36px;border-radius:50%;background:${c.hex};border:1.5px solid #e0e0e0;margin:0 auto 3px;"></div>
         <div style="font-size:7px;font-weight:700;color:#2D2D2D;line-height:1.2;">${c.color}</div>
         <div style="font-size:6.5px;color:#888;line-height:1.3;margin-top:1px;">${c.effect || ""}</div>
     </div>`).join("");
@@ -1404,15 +1429,15 @@ function buildReportHTML(r, s, conf, f, d, st, best, worst, detail, faceImg, goo
         ${hasEye ? `<div style="padding:6px 20px;">
             <div style="font-size:11px;font-weight:700;margin-bottom:6px;color:#2D2D2D;">■ 아이섀도 진단</div>
             <div style="display:flex;gap:8px;">
-                <div style="flex:1;border:1px solid #e0e0e0;border-radius:8px;padding:8px;">
-                    <div style="text-align:center;font-size:9px;font-weight:700;color:#2D2D2D;margin-bottom:2px;">추천 컬러</div>
+                <div style="flex:1;border:2px solid ${s.accent};border-radius:8px;padding:8px;background:${s.accent}08;">
+                    <div style="text-align:center;font-size:9px;font-weight:700;color:${s.accent};margin-bottom:2px;">✨ 추천 컬러</div>
                     <div style="text-align:center;font-size:7px;color:#888;margin-bottom:6px;">투명감 · 혈색감 · 입체감 강조</div>
-                    <div style="display:flex;gap:4px;justify-content:center;">${eyeChip(eyeC.good, "#e0d8d0")}</div>
+                    <div style="display:flex;gap:4px;justify-content:center;">${eyeChip(eyeC.good)}</div>
                 </div>
-                <div style="flex:1;border:1px solid #EF5350;border-radius:8px;padding:8px;">
-                    <div style="text-align:center;font-size:9px;font-weight:700;color:#EF5350;margin-bottom:2px;">피해야 할 컬러</div>
-                    <div style="text-align:center;font-size:7px;color:#888;margin-bottom:6px;">칙칙함 · 부자연스러움 · 과한 대비</div>
-                    <div style="display:flex;gap:4px;justify-content:center;">${eyeChip(eyeC.bad, "#e8d0d0")}</div>
+                <div style="flex:1;border:1px solid #e0e0e0;border-radius:8px;padding:8px;">
+                    <div style="text-align:center;font-size:9px;font-weight:700;color:#999;margin-bottom:2px;">피해야 할 컬러</div>
+                    <div style="text-align:center;font-size:7px;color:#aaa;margin-bottom:6px;">칙칙함 · 부자연스러움 · 과한 대비</div>
+                    <div style="display:flex;gap:4px;justify-content:center;">${eyeChip(eyeC.bad)}</div>
                 </div>
             </div>
         </div>` : ""}
@@ -1440,31 +1465,36 @@ function buildReportHTML(r, s, conf, f, d, st, best, worst, detail, faceImg, goo
                     </div>`).join("")}
                 </div>
                 ${hasLip ? `<div style="width:160px;flex-shrink:0;">
-                    <div style="font-size:8px;font-weight:700;margin-bottom:4px;">■ 추천 립 컬러</div>
+                    <div style="font-size:8px;font-weight:700;color:${s.accent};margin-bottom:4px;">✨ 추천 립 컬러</div>
                     <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;">${lipChip(lipC.good)}</div>
-                    <div style="font-size:8px;font-weight:700;color:#EF5350;margin-bottom:4px;">■ 피해야 할 립 컬러</div>
+                    <div style="font-size:8px;font-weight:700;color:#999;margin-bottom:4px;">■ 피해야 할 립 컬러</div>
                     <div style="display:flex;gap:4px;flex-wrap:wrap;">${lipChip(lipC.bad)}</div>
                 </div>` : ""}
             </div>
         </div>
 
         ${hasPalette ? `<div style="padding:6px 20px;">
-            <div style="font-size:11px;font-weight:700;margin-bottom:6px;">■ 추천 컬러 팔레트 (${detail})</div>
+            <div style="font-size:11px;font-weight:700;margin-bottom:2px;">■ 추천 컬러 팔레트 (${detail})</div>
+            <div style="font-size:6.5px;color:#999;margin-bottom:6px;">※ 아이섀도 메이크업에 활용하기 좋은 추천 색상 조합</div>
             <div style="display:flex;gap:8px;">
                 <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:6px 8px;">
-                    <div style="font-size:7px;font-weight:700;color:#888;margin-bottom:3px;">베이스 컬러</div>
+                    <div style="font-size:7px;font-weight:700;color:#888;margin-bottom:1px;">섀도 베이스</div>
+                    <div style="font-size:5.5px;color:#aaa;margin-bottom:3px;">밑색</div>
                     <div style="display:flex;gap:3px;">${(cp.base||[]).map(c=>`<div style="width:24px;height:24px;border-radius:50%;background:${c.hex||c.color};border:1.5px solid #e8e8e8;"></div>`).join("")}</div>
                 </div>
                 <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:6px 8px;">
-                    <div style="font-size:7px;font-weight:700;color:#888;margin-bottom:3px;">메인 컬러</div>
+                    <div style="font-size:7px;font-weight:700;color:#888;margin-bottom:1px;">메인 컬러</div>
+                    <div style="font-size:5.5px;color:#aaa;margin-bottom:3px;">대표색</div>
                     <div style="display:flex;gap:3px;">${(cp.main||[]).map(c=>`<div style="width:24px;height:24px;border-radius:50%;background:${c.hex||c.color};border:1.5px solid #e8e8e8;"></div>`).join("")}</div>
                 </div>
                 <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:6px 8px;">
-                    <div style="font-size:7px;font-weight:700;color:#888;margin-bottom:3px;">포인트 컬러</div>
+                    <div style="font-size:7px;font-weight:700;color:#888;margin-bottom:1px;">포인트 컬러</div>
+                    <div style="font-size:5.5px;color:#aaa;margin-bottom:3px;">강조색</div>
                     <div style="display:flex;gap:3px;">${(cp.point||[]).map(c=>`<div style="width:24px;height:24px;border-radius:50%;background:${c.hex||c.color};border:1.5px solid #e8e8e8;"></div>`).join("")}</div>
                 </div>
                 <div style="flex:1;background:#F8F8F8;border-radius:8px;padding:6px 8px;">
-                    <div style="font-size:7px;font-weight:700;color:#888;margin-bottom:3px;">뉴트럴 컬러</div>
+                    <div style="font-size:7px;font-weight:700;color:#888;margin-bottom:1px;">뉴트럴 컬러</div>
+                    <div style="font-size:5.5px;color:#aaa;margin-bottom:3px;">블렌딩</div>
                     <div style="display:flex;gap:3px;">${(cp.neutral||[]).map(c=>`<div style="width:24px;height:24px;border-radius:50%;background:${c.hex||c.color};border:1.5px solid #e8e8e8;"></div>`).join("")}</div>
                 </div>
             </div>

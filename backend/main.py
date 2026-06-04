@@ -1,12 +1,15 @@
 """Beauty AI Analyze - FastAPI Backend"""
 
+import html
 import json
 import os
 import sys
+import time
+from collections import defaultdict
 from pathlib import Path
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, File, Form, UploadFile, HTTPException
+from fastapi import FastAPI, File, Form, Request, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, HTMLResponse
@@ -21,17 +24,73 @@ load_dotenv(ROOT / ".env")
 from analyzer.color_analyzer import analyze_image
 from analyzer.fashion_matcher import match_fashion
 from utils.image_utils import resize_for_analysis
-from utils.supabase_client import save_analysis, get_analysis, track_product_click, upload_report_image, get_report_image_url, cleanup_old_report_images
+from utils.supabase_client import save_analysis, get_analysis, track_product_click, upload_report_image, cleanup_old_report_images
 import base64
 
 app = FastAPI(title="Beauty AI Analyze API")
 
+# --- CORS: 허용 도메인 제한 ---
+ALLOWED_ORIGINS = [
+    "https://beauty-ai-analyze.onrender.com",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_methods=["GET", "POST", "HEAD", "OPTIONS"],
+    allow_headers=["Content-Type"],
 )
+
+
+# --- Rate Limiter (in-memory, per-IP) ---
+class RateLimiter:
+    """Simple in-memory sliding window rate limiter."""
+
+    def __init__(self):
+        self._hits: dict[str, list[float]] = defaultdict(list)
+        self._last_cleanup = time.time()
+
+    def is_allowed(self, key: str, max_requests: int, window_seconds: int) -> bool:
+        now = time.time()
+        # Periodically purge stale keys (every 5 minutes)
+        if now - self._last_cleanup > 300:
+            self._purge_stale(now, window_seconds)
+            self._last_cleanup = now
+        # Remove expired entries for this key
+        cutoff = now - window_seconds
+        self._hits[key] = [t for t in self._hits[key] if t > cutoff]
+        if len(self._hits[key]) >= max_requests:
+            return False
+        self._hits[key].append(now)
+        return True
+
+    def _purge_stale(self, now: float, default_window: int):
+        cutoff = now - default_window
+        stale = [k for k, v in self._hits.items() if not v or v[-1] < cutoff]
+        for k in stale:
+            del self._hits[k]
+
+
+_limiter = RateLimiter()
+
+
+def _get_client_ip(request: Request) -> str:
+    forwarded = request.headers.get("x-forwarded-for")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    return request.client.host if request.client else "unknown"
+
+
+def _check_rate_limit(request: Request, endpoint: str, max_requests: int, window_seconds: int):
+    ip = _get_client_ip(request)
+    key = f"{ip}:{endpoint}"
+    if not _limiter.is_allowed(key, max_requests, window_seconds):
+        raise HTTPException(
+            status_code=429,
+            detail="요청이 너무 많습니다. 잠시 후 다시 시도해주세요.",
+        )
 
 # Serve frontend
 FRONTEND = ROOT / "frontend"
@@ -54,13 +113,13 @@ async def index(share: str = ""):
     if not analysis:
         return FileResponse(str(FRONTEND / "index.html"))
 
-    season_detail = analysis.get("season_detail", "퍼스널컬러")
-    conclusion = analysis.get("one_line_conclusion", "AI 퍼스널컬러 무료 진단 받아보세요!")
+    season_detail = html.escape(analysis.get("season_detail", "퍼스널컬러"))
+    conclusion = html.escape(analysis.get("one_line_conclusion", "AI 퍼스널컬러 무료 진단 받아보세요!"))
     image_url = analysis.get("report_image_url", "")
     share_url = f"https://beauty-ai-analyze.onrender.com/?share={share}"
 
     # 원본 HTML 읽어서 OG 태그 동적 삽입
-    html = (FRONTEND / "index.html").read_text(encoding="utf-8")
+    raw_html = (FRONTEND / "index.html").read_text(encoding="utf-8")
     og_tags = f"""
     <meta property="og:title" content="나의 퍼스널컬러는 {season_detail}!">
     <meta property="og:description" content="{conclusion}">
@@ -75,13 +134,14 @@ async def index(share: str = ""):
     <meta name="twitter:image" content="{image_url}">
     <meta name="twitter:card" content="summary_large_image">"""
 
-    html = html.replace("</head>", og_tags + "\n</head>", 1)
-    return HTMLResponse(html)
+    raw_html = raw_html.replace("</head>", og_tags + "\n</head>", 1)
+    return HTMLResponse(raw_html)
 
 
 @app.post("/api/analyze")
-async def api_analyze(file: UploadFile = File(...)):
+async def api_analyze(request: Request, file: UploadFile = File(...)):
     """이미지 업로드 → 퍼스널컬러 + 얼굴 인상 분석"""
+    _check_rate_limit(request, "analyze", max_requests=10, window_seconds=60)
     if file.content_type not in ("image/jpeg", "image/png", "image/webp"):
         raise HTTPException(400, "지원하지 않는 이미지 형식입니다.")
 
@@ -107,12 +167,16 @@ async def api_analyze(file: UploadFile = File(...)):
             raise HTTPException(429, "API 일일 사용량을 초과했습니다. 잠시 후 다시 시도해주세요.")
         if "503" in msg or "UNAVAILABLE" in msg:
             raise HTTPException(503, "AI 서버가 일시적으로 과부하 상태입니다. 잠시 후 다시 시도해주세요.")
-        raise HTTPException(500, f"분석 중 오류가 발생했습니다: {msg}")
+        raise HTTPException(500, "분석 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
 
 
 @app.post("/api/fashion-match")
-async def api_fashion_match(file: UploadFile = File(...), season_type: str = Form("spring_warm")):
+async def api_fashion_match(request: Request, file: UploadFile = File(...), season_type: str = Form("spring_warm")):
     """옷 사진 업로드 → 퍼스널컬러 매칭 분석"""
+    _check_rate_limit(request, "fashion-match", max_requests=10, window_seconds=60)
+    valid = ["spring_warm", "summer_cool", "autumn_warm", "winter_cool"]
+    if season_type not in valid:
+        raise HTTPException(400, f"잘못된 시즌 타입: {season_type}")
     if file.content_type not in ("image/jpeg", "image/png", "image/webp"):
         raise HTTPException(400, "지원하지 않는 이미지 형식입니다.")
 
@@ -132,7 +196,7 @@ async def api_fashion_match(file: UploadFile = File(...), season_type: str = For
             raise HTTPException(429, "API 일일 사용량을 초과했습니다. 잠시 후 다시 시도해주세요.")
         if "503" in msg or "UNAVAILABLE" in msg:
             raise HTTPException(503, "AI 서버가 일시적으로 과부하 상태입니다. 잠시 후 다시 시도해주세요.")
-        raise HTTPException(500, f"매칭 분석 중 오류가 발생했습니다: {msg}")
+        raise HTTPException(500, "매칭 분석 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.")
 
 
 @app.get("/api/share/{analysis_id}")
@@ -145,8 +209,9 @@ async def get_shared_analysis(analysis_id: str):
 
 
 @app.post("/api/upload-report-image")
-async def api_upload_report_image(data: dict):
+async def api_upload_report_image(request: Request, data: dict):
     """클라이언트에서 생성한 리포트 이미지를 Supabase Storage에 업로드"""
+    _check_rate_limit(request, "upload-report", max_requests=10, window_seconds=60)
     analysis_id = data.get("analysis_id", "")
     image_data = data.get("image_data", "")  # base64 data URL
     if not analysis_id or not image_data:
@@ -165,8 +230,9 @@ async def api_upload_report_image(data: dict):
 
 
 @app.post("/api/track-click")
-async def api_track_click(data: dict):
+async def api_track_click(request: Request, data: dict):
     """제품 클릭 추적"""
+    _check_rate_limit(request, "track-click", max_requests=30, window_seconds=60)
     track_product_click(
         season_type=data.get("season_type", ""),
         gender=data.get("gender", ""),
@@ -220,14 +286,22 @@ async def get_quiz(count: int = 5):
     count = min(count, len(questions))
     selected = random.sample(questions, count)
     # 정답 제거해서 클라이언트에 전달
+    sanitized = []
     for q in selected:
-        q["options"] = ["spring_warm", "summer_cool", "autumn_warm", "winter_cool"]
-    return {"questions": selected}
+        sanitized.append({
+            "id": q.get("id"),
+            "celebrity": q.get("celebrity"),
+            "hint": q.get("hint"),
+            "detail": q.get("detail"),
+            "options": ["spring_warm", "summer_cool", "autumn_warm", "winter_cool"],
+        })
+    return {"questions": sanitized}
 
 
 @app.post("/api/contact")
-async def api_contact(data: dict):
+async def api_contact(request: Request, data: dict):
     """문의 접수 프록시 - Apps Script + Slack으로 전달 (시크릿 서버에서만 관리)"""
+    _check_rate_limit(request, "contact", max_requests=5, window_seconds=60)
     import httpx
     sheet_url = os.getenv("CONTACT_SHEET_URL", "")
     slack_url = os.getenv("CONTACT_SLACK_URL", "")
