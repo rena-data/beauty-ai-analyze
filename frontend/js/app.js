@@ -230,8 +230,10 @@ function initKakao() {
 
 // ─── Share URL ───
 function getShareUrl() {
-    if (!analysisResult || !analysisResult.share_id) return null;
-    return `${location.origin}?share=${analysisResult.share_id}`;
+    if (analysisResult && analysisResult.share_id) {
+        return `${location.origin}?share=${analysisResult.share_id}`;
+    }
+    return location.origin;
 }
 
 // ─── Report Image Upload (background) ───
@@ -563,7 +565,7 @@ function renderResults() {
     $("#results-section").classList.remove("hidden");
     // 공유 버튼 표시
     const shareWrap = $("#share-wrap");
-    if (shareWrap && analysisResult.share_id) shareWrap.style.display = "inline-block";
+    if (shareWrap) shareWrap.style.display = "inline-block";
 
     $$(".tab").forEach((t) => t.classList.remove("active"));
     $$(".tab")[0].classList.add("active");
